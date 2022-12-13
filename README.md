@@ -1,16 +1,16 @@
-#REPO DESCRIBE
+# REPO DESCRIBE
 A c-language trainning repo.
 Most of them are some question at leetcode that I need debug.
 But I did not buy the `Plus` at leetcode, So I build a local debug environment.
 
-##file name
+## file name
 lc{leecode's question ID}[\_{version number begin from 1}].c
 
-##compile
+## compile
 ./compiler.sh filename
 
-##run without debug
+## run without debug
 ./a.out
 
-##debug
+## debug
 gdb a.out
