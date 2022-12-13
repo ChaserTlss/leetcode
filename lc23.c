@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-struct ListNode {
-	int val;
-	struct ListNode *next;
-};
+#include "lcHead.h"
+
 struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
     struct ListNode *p1 = list1;
     struct ListNode *p2 = list2;
@@ -52,20 +47,6 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
     }
 
     return lists[0];
-}
-
-#define ARRAYSIZE(array) (sizeof(array)/sizeof(array[0]))
-void listGenerate(struct ListNode array[], size_t arraySize)
-{
-	if (array == NULL)
-		return;
-
-	struct ListNode *node = &array[0];
-	for (int i = 1; i < arraySize; i++) {
-		node->next = &array[i];
-		node = node->next;
-	}
-	node->next = NULL;
 }
 
 int main(void)
