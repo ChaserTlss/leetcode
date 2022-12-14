@@ -61,9 +61,7 @@ int main(void)
 
 	struct ListNode *ret = mergeKLists(array0, ARRAYSIZE(array0));
 
-	while (ret) {
-		printf("%d\n", ret->val);
-		ret = ret->next;
-	}
+	int val[] = {1, 1, 2, 3, 4, 4, 5, 6,};
+	listCheck(ret, val, ARRAYSIZE(val));
 	return 0;
 }

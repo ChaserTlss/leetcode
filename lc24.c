@@ -33,17 +33,10 @@ void case_1(void) {
 
 	/* check */
 	/* It should be  [2]->[1]->[4]->[3] */
-	if (ret->val != 2)
-		printf(" first node is %d, should be 2\n", ret->val);
-
-	if (ret->next->val != 1)
-		printf(" first node is %d, should be 1\n", ret->next->val);
-
-	if (ret->next->next->val != 4)
-		printf(" first node is %d, should be 4\n", ret->next->next->val);
-
-	if (ret->next->next->next->val != 3)
-		printf(" first node is %d, should be 3\n", ret->next->next->next->val);
+	int val[] = {2, 1, 4, 3};
+	if (!listCheck(ret, val, ARRAYSIZE(val))) {
+		printf("case 1 is failed\n");
+	}
 
 }
 #endif
