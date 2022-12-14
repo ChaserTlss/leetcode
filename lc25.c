@@ -54,6 +54,7 @@ struct ListNode* reverseKGroup(struct ListNode* head, int k)
 	return ret.next;
 }
 
+#ifndef NLC25
 void case_1(void)
 {
 	struct ListNode a1[] = { {.val = 1}, {.val = 2}, {.val = 3}, {.val = 4}, {.val = 5},};
@@ -103,3 +104,4 @@ int main(void)
 	case_3();
 	return 0;
 }
+#endif
