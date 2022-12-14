@@ -80,6 +80,9 @@ bool isMatchGold2(char * s, char * p)
 #define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
 bool isMatch(char *s, char *p)
 {
+#ifdef DEBUG
+	printf("sl %ld pl %ld\n", strlen(s), strlen(p));
+#endif
 	while (p[0] != '\0') {
 		if (p[1] == '*') {
 			if (isMatch(s, p + 2))
