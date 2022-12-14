@@ -77,28 +77,24 @@ bool isMatchGold2(char * s, char * p)
 	}
 }
 
-#define CHARMATCH(s, p) ((p[0] == '.')||(s[0] == p[0]))
+#define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
 bool isMatch(char *s, char *p)
 {
-	if (p[0] == '\0') {
-		return s[0] == '\0';
-	}
-
-	if (s[0] == '\0') {
-		return p[1] == '*' && isMatch(s, p + 2);
-	}
-
-	if (p[1] == '*') {
-		if (isMatch(s, p + 2))
-			return true;
-		return (CHARMATCH(s, p) && isMatch(s + 1, p));
-	} else {
-		if (CHARMATCH(s, p)) {
-			return isMatch(s + 1, p + 1);
-		} else {
+	while (p[0] != '\0') {
+		if (p[1] == '*') {
+			if (isMatch(s, p + 2))
+				return true;
+			else
+				return (CHARMATCH(s, p) && isMatch(s + 1, p));
+		} else if (s[0] == '\0' || (p[0] != '.' && s[0] != p[0])) {
 			return false;
 		}
+
+		s++;
+		p++;
 	}
+
+	return (p[0] == '\0' && s[0] == '\0');
 }
 
 void case_1(void)
