@@ -77,19 +77,44 @@ bool isMatchGold2(char * s, char * p)
 	}
 }
 
+struct map {
+	size_t pl;
+	size_t sl;
+	size_t size;
+	bool map[0]; /* False: not checked. True: checked and failed */
+};
+
+static inline void mapSetFalse(struct map *map, size_t entry)
+{
+	map->map[entry] = 1;
+}
+
 #define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
-bool isMatch(char *s, char *p)
+bool __isMatch(char *s, char *p, struct map *map)
 {
 #ifdef DEBUG
 	printf("sl %ld pl %ld\n", strlen(s), strlen(p));
 #endif
+	/* if this pattern failed before */
+	if (map->map[strlen(s) * map->pl + strlen(p)]) {
+		return false;
+	}
+
 	while (p[0] != '\0') {
 		if (p[1] == '*') {
-			if (isMatch(s, p + 2))
+			/* try to cut [a-z.]* */
+			if (__isMatch(s, p + 2, map))
 				return true;
 			else
-				return (CHARMATCH(s, p) && isMatch(s + 1, p));
+				/* try to repeat [a-z.]* */
+				if (CHARMATCH(s, p) && __isMatch(s + 1, p, map)) {
+					return true;
+				} else {
+					mapSetFalse(map, strlen(s) * map->pl + strlen(p));
+					return false;
+				}
 		} else if (s[0] == '\0' || (p[0] != '.' && s[0] != p[0])) {
+			mapSetFalse(map, strlen(s) * map->pl + strlen(p));
 			return false;
 		}
 
@@ -97,7 +122,28 @@ bool isMatch(char *s, char *p)
 		p++;
 	}
 
-	return (p[0] == '\0' && s[0] == '\0');
+	if (p[0] == '\0' && s[0] == '\0') {
+		return true;
+	} else {
+		mapSetFalse(map, strlen(s) * map->pl + strlen(p));
+		return false;
+	}
+
+}
+
+bool isMatch(char *s, char *p)
+{
+	/* perpare a cache for save the result */
+	size_t mapSize = sizeof(bool) * ((strlen(s) + 1) * (strlen(p) + 1));
+	struct map *map = malloc(mapSize + sizeof(*map));
+	memset(map, 0, mapSize + sizeof(*map));
+	map->sl = strlen(s) + 1;
+	map->pl = strlen(p) + 1;
+	map->size = mapSize;
+
+	bool ret = __isMatch(s, p, map);
+	free(map);
+	return ret;
 }
 
 void case_1(void)
