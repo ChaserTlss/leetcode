@@ -80,24 +80,67 @@ bool isMatchGold2(char * s, char * p)
 #define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
 bool isMatch(char *s, char *p)
 {
+	struct {
+		char *s;
+		char *p;
+		char sStep;
+	} fatalStack[64] = {0}, *head = fatalStack;
+
+AGAIN:
+	while (p[0] != '\0') {
 #ifdef DEBUG
 	printf("sl %ld pl %ld\n", strlen(s), strlen(p));
 #endif
-	while (p[0] != '\0') {
 		if (p[1] == '*') {
-			if (isMatch(s, p + 2))
-				return true;
-			else
-				return (CHARMATCH(s, p) && isMatch(s + 1, p));
-		} else if (s[0] == '\0' || (p[0] != '.' && s[0] != p[0])) {
-			return false;
-		}
+			if ((head->sStep == 0 || CHARMATCH((s + head->sStep - 1), p))) {
+				head->s = s;
+				head->p = p;
+				head->sStep += 1;
 
-		s++;
-		p++;
+				head += 1;
+				head->s = 0;
+				head->p = 0;
+				head->sStep = 0;
+				/* try the 0 */
+				s += (head - 1)->sStep - 1;
+				p += 2;
+
+			} else {
+				if (head == fatalStack)
+					return false;
+				else {
+					head -= 1;
+					s = head->s;
+					p = head->p;
+				}
+			}
+		} else if (s[0] == '\0' || (p[0] != '.' && s[0] != p[0])) {
+				if (head == fatalStack)
+					return false;
+				else {
+					head -= 1;
+					s = head->s;
+					p = head->p;
+				}
+		} else {
+			s++;
+			p++;
+		}
 	}
 
-	return (p[0] == '\0' && s[0] == '\0');
+	if (p[0] == '\0' && s[0] == '\0') {
+		return true;
+	} else {
+		if (head == fatalStack)
+			return false;
+		else {
+			head -= 1;
+			s = head->s;
+			p = head->p;
+			goto AGAIN;
+		}
+	}
+
 }
 
 void case_1(void)
