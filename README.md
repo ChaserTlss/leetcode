@@ -14,3 +14,13 @@ lc{leecode's question ID}[\_{version number begin from 1}].c
 
 ## debug
 gdb a.out
+
+## run all c file
+./run_all.sh
+
+## commit format
+```git commit
+file_name: question topic
+
+commit
+```
