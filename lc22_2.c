@@ -9,7 +9,7 @@ struct box {
 	char **boxMemory;
 };
 
-inline struct box *newBox(void)
+static inline struct box *newBox(void)
 {
 	struct box *ret = malloc(sizeof(struct box));
 	ret->boxSize = 32;
@@ -20,14 +20,14 @@ inline struct box *newBox(void)
 }
 
 /* remember to free(*table) */
-inline void expectBox(struct box *box, char ***table, int *retSize)
+static inline void expectBox(struct box *box, char ***table, int *retSize)
 {
 	*table = box->boxMemory;
 	*retSize = box->boxHead;
 	free(box);
 }
 
-inline char **inputBox(struct box *box, char *string)
+static inline char **inputBox(struct box *box, char *string)
 {
 	if (box->boxHead + 1 >= box->boxSize) {
 		box->boxMemory = realloc(box->boxMemory, box->boxSize * 2 * sizeof(char*));
@@ -38,12 +38,12 @@ inline char **inputBox(struct box *box, char *string)
 	return &box->boxMemory[box->boxHead++];
 }
 
-inline int headBox(struct box *box)
+static inline int headBox(struct box *box)
 {
 	return box->boxHead;
 }
 
-inline char **memoryBox(struct box *box, int index)
+static inline char **memoryBox(struct box *box, int index)
 {
 	return &box->boxMemory[index];
 }
