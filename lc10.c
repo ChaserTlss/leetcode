@@ -77,70 +77,72 @@ bool isMatchGold2(char * s, char * p)
 	}
 }
 
-#define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
-bool isMatch(char *s, char *p)
-{
-	struct {
-		char *s;
-		char *p;
-		char sStep;
-	} fatalStack[64] = {0}, *head = fatalStack;
+struct map {
+	size_t pl;
+	size_t sl;
+	size_t size;
+	bool map[0]; /* False: not checked. True: checked and failed */
+};
 
-AGAIN:
-	while (p[0] != '\0') {
+static inline void mapSetFalse(struct map *map, size_t entry)
+{
+	map->map[entry] = 1;
+}
+
+#define CHARMATCH(s, p) ((((p[0] == '.')||(s[0] == p[0])) && (s[0] != '\0')))
+bool __isMatch(char *s, char *p, struct map *map)
+{
 #ifdef DEBUG
 	printf("sl %ld pl %ld\n", strlen(s), strlen(p));
 #endif
+	/* if this pattern failed before */
+	if (map->map[strlen(s) * map->pl + strlen(p)]) {
+		return false;
+	}
+
+	while (p[0] != '\0') {
 		if (p[1] == '*') {
-			if ((head->sStep == 0 || CHARMATCH((s + head->sStep - 1), p))) {
-				head->s = s;
-				head->p = p;
-				head->sStep += 1;
-
-				head += 1;
-				head->s = 0;
-				head->p = 0;
-				head->sStep = 0;
-				/* try the 0 */
-				s += (head - 1)->sStep - 1;
-				p += 2;
-
-			} else {
-				if (head == fatalStack)
+			/* try to cut [a-z.]* */
+			if (__isMatch(s, p + 2, map))
+				return true;
+			else
+				/* try to repeat [a-z.]* */
+				if (CHARMATCH(s, p) && __isMatch(s + 1, p, map)) {
+					return true;
+				} else {
+					mapSetFalse(map, strlen(s) * map->pl + strlen(p));
 					return false;
-				else {
-					head -= 1;
-					s = head->s;
-					p = head->p;
 				}
-			}
 		} else if (s[0] == '\0' || (p[0] != '.' && s[0] != p[0])) {
-				if (head == fatalStack)
-					return false;
-				else {
-					head -= 1;
-					s = head->s;
-					p = head->p;
-				}
-		} else {
-			s++;
-			p++;
+			mapSetFalse(map, strlen(s) * map->pl + strlen(p));
+			return false;
 		}
+		s++;
+		p++;
 	}
 
 	if (p[0] == '\0' && s[0] == '\0') {
 		return true;
 	} else {
-		if (head == fatalStack)
-			return false;
-		else {
-			head -= 1;
-			s = head->s;
-			p = head->p;
-			goto AGAIN;
-		}
+		mapSetFalse(map, strlen(s) * map->pl + strlen(p));
+		return false;
 	}
 
+}
+
+bool isMatch(char *s, char *p)
+{
+	/* perpare a cache for save the result */
+	size_t mapSize = sizeof(bool) * ((strlen(s) + 1) * (strlen(p) + 1));
+	struct map *map = malloc(mapSize + sizeof(*map));
+	memset(map, 0, mapSize + sizeof(*map));
+	map->sl = strlen(s) + 1;
+	map->pl = strlen(p) + 1;
+	map->size = mapSize;
+
+	bool ret = __isMatch(s, p, map);
+	free(map);
+	return ret;
 }
 
 void case_1(void)
@@ -233,6 +235,16 @@ void case_9(void)
 	}
 }
 
+void case_10(void)
+{
+	char *s = "aaaaaaaaaaaaab";
+	char *p = "a*a*a*a*a*a*a*a*a*a*b";
+
+	if (isMatch(s, p) != isMatchGold2(s, p)) {
+		printf("case 10 is failed\n");
+	}
+}
+
 int main(void)
 {
 	case_1();
@@ -244,5 +256,6 @@ int main(void)
 	case_7();
 	case_8();
 	case_9();
+	case_10();
 	return 0;
 }
