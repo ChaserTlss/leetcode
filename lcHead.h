@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h>
 
 /* Definition for leetcode singly-linked list. */
 struct ListNode {
