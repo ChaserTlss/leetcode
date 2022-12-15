@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "lcHead.h"
 
 int howLongPalindrome(const char *s, int p, int *start, int *end)
 {
@@ -52,30 +50,24 @@ char * longestPalindrome(char * s){
 	return ret;
 }
 
-#define CASE_1
-#ifdef CASE_1
 void case_1(void)
 {
 	char s[] = "babad";
-	printf("bab/aba %s\n", longestPalindrome(s));
-}
-#endif
+	char *r = longestPalindrome(s);
+	printf("bab/aba %s\n", r);
 
-#define CASE_2
-#ifdef CASE_2
+	free(r);
+}
+
 void case_2(void)
 {
 	char s[] = "chhb";
-	printf("hh %s\n", longestPalindrome(s));
-}
-#endif
+	char *r = longestPalindrome(s);
+	printf("hh %s\n", r);
 
-void main(void)
-{
-#ifdef CASE_1
-	case_1();
-#endif
-#ifdef CASE_2
-	case_2();
-#endif
+	free(r);
 }
+
+REGISTER_TEST_CASE(case_1);
+REGISTER_TEST_CASE(case_2);
+
