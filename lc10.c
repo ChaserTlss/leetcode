@@ -190,6 +190,16 @@ void case_9(void)
 	}
 }
 
+void case_10(void)
+{
+	char *s = "aaaaaaaaaaaaab";
+	char *p = "a*a*a*a*a*a*a*a*a*a*b";
+
+	if (isMatch(s, p) != isMatchGold2(s, p)) {
+		printf("case 10 is failed\n");
+	}
+}
+
 int main(void)
 {
 	case_1();
@@ -201,5 +211,6 @@ int main(void)
 	case_7();
 	case_8();
 	case_9();
+	case_10();
 	return 0;
 }
