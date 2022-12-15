@@ -49,7 +49,7 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize){
     return lists[0];
 }
 
-int main(void)
+void case_1(void)
 {
 	struct ListNode array1[3] = {{.val = 1}, {.val = 4}, {.val = 5}};
 	listGenerate(array1, ARRAYSIZE(array1));
@@ -63,5 +63,5 @@ int main(void)
 
 	int val[] = {1, 1, 2, 3, 4, 4, 5, 6,};
 	listCheck(ret, val, ARRAYSIZE(val));
-	return 0;
 }
+REGISTER_TEST_CASE(case_1);

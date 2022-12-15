@@ -9,8 +9,6 @@ struct ListNode* swapPairs(struct ListNode *head)
 	return reverseKGroup(head, 2);
 }
 
-#define CASE_1
-#ifdef CASE_1
 void case_1(void) {
 	struct ListNode a1[] = { {.val = 1}, {.val = 2}, {.val = 3}, {.val = 4}};
 	listGenerate(a1, ARRAYSIZE(a1));
@@ -25,12 +23,5 @@ void case_1(void) {
 	}
 
 }
-#endif
 
-
-int main(void)
-{
-#ifdef CASE_1
-	case_1();
-#endif
-}
+REGISTER_TEST_CASE(case_1);

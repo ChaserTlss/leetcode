@@ -214,7 +214,6 @@ void case_7(void)
 		printf("case 7 is failed\n");
 	}
 }
-
 void case_8(void)
 {
 	char *s = "aabcbcbcaccbcaabc";
@@ -245,17 +244,14 @@ void case_10(void)
 	}
 }
 
-int main(void)
-{
-	case_1();
-	case_2();
-	case_3();
-	case_4();
-	case_5();
-	case_6();
-	case_7();
-	case_8();
-	case_9();
-	case_10();
-	return 0;
-}
+REGISTER_TEST_CASE(case_1);
+REGISTER_TEST_CASE(case_2);
+REGISTER_TEST_CASE(case_3);
+REGISTER_TEST_CASE(case_4);
+REGISTER_TEST_CASE(case_5);
+REGISTER_TEST_CASE(case_6);
+REGISTER_TEST_CASE(case_7);
+REGISTER_TEST_CASE(case_8);
+REGISTER_TEST_CASE(case_9);
+REGISTER_TEST_CASE(case_10);
+

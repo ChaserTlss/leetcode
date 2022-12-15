@@ -97,11 +97,7 @@ void case_3(void)
 	}
 }
 
-int main(void)
-{
-	case_1();
-	case_2();
-	case_3();
-	return 0;
-}
+REGISTER_TEST_CASE(case_1);
+REGISTER_TEST_CASE(case_2);
+REGISTER_TEST_CASE(case_3);
 #endif

@@ -42,4 +42,21 @@ static bool listCheck(struct ListNode *head, int valArray[], size_t arraySize)
 	return true;
 }
 
+/* for common unit function */
+typedef void (*case_fn_t)(void);
+extern case_fn_t __start_test_fn_p;
+extern case_fn_t __stop_test_fn_p;
+#define REGISTER_TEST_CASE(fn_name) \
+	case_fn_t __attribute__((section ("test_fn_p"))) fn_name##_fn = fn_name
+
+int main(void)
+{
+	int index = 0;
+	for (case_fn_t *iter = &__start_test_fn_p; iter + index < &__stop_test_fn_p; index++)
+		(*(iter + index))();
+
+	printf("unit test finish: count %d. pls check the log\n", index);
+	return 0;
+}
+
 #endif /* #ifndef __LCHEAD__H__ */
