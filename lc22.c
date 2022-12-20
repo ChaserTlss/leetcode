@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "lcHead.h"
 
 /* this box manager a char * array. */
 struct box {
@@ -9,7 +7,7 @@ struct box {
 	char **boxMemory;
 };
 
-struct box *newBox(void)
+static inline struct box *newBox(void)
 {
 	struct box *ret = malloc(sizeof(struct box));
 	ret->boxSize = 32;
@@ -20,14 +18,14 @@ struct box *newBox(void)
 }
 
 /* remember to free(*table) */
-void expectBox(struct box *box, char ***table, int *retSize)
+static inline void expectBox(struct box *box, char ***table, int *retSize)
 {
 	*table = box->boxMemory;
 	*retSize = box->boxHead;
 	free(box);
 }
 
-char **inputBox(struct box *box, char *string)
+static inline char **inputBox(struct box *box, char *string)
 {
 	if (box->boxHead + 1 >= box->boxSize) {
 		box->boxMemory = realloc(box->boxMemory, box->boxSize * 2 * sizeof(char*));
@@ -38,12 +36,12 @@ char **inputBox(struct box *box, char *string)
 	return &box->boxMemory[box->boxHead++];
 }
 
-int headBox(struct box *box)
+static inline int headBox(struct box *box)
 {
 	return box->boxHead;
 }
 
-char **memoryBox(struct box *box, int index)
+static inline char **memoryBox(struct box *box, int index)
 {
 	return &box->boxMemory[index];
 }
@@ -98,10 +96,7 @@ char ** generateParenthesis(int n, int* returnSize){
 	return ret;
 }
 
-
-#define CASE_1
-#ifdef CASE_1
-int case_1(void)
+void case_1(void)
 {
 	int retSize = 0;
 	int testN = 1;
@@ -114,13 +109,9 @@ int case_1(void)
 	}
 	free(ret);
 	printf("retSize = %d\n", retSize);
-	return 0;
 }
-#endif
 
-#define CASE_2
-#ifdef CASE_2
-int case_2(void)
+void case_2(void)
 {
 	int retSize = 0;
 	int testN = 3;
@@ -133,13 +124,9 @@ int case_2(void)
 	}
 	free(ret);
 	printf("retSize = %d\n", retSize);
-	return 0;
 }
-#endif
 
-#define CASE_3
-#ifdef CASE_3
-int case_3(void)
+void case_3(void)
 {
 	int retSize = 0;
 	int testN = 8;
@@ -152,22 +139,9 @@ int case_3(void)
 	}
 	free(ret);
 	printf("retSize = %d\n", retSize);
-	return 0;
-}
-#endif
-
-int main(void)
-{
-#ifdef CASE_1
-		case_1();
-#endif
-#ifdef CASE_2
-		case_2();
-#endif
-#ifdef CASE_3
-		case_3();
-#endif
-	return 0;
 }
 
+REGISTER_TEST_CASE(case_1);
+REGISTER_TEST_CASE(case_2);
+REGISTER_TEST_CASE(case_3);
 
