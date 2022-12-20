@@ -1,6 +1,9 @@
 #ifndef __LCBOX_H__
 #define __LCBOX_H__
 
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef __BOX_START_ELEMENT_SIZE__ 
 #define __BOX_START_ELEMENT_SIZE__ 32
 #endif
