@@ -7,6 +7,7 @@
 #include <limits.h>
 
 #include "lcBox.h"
+#include "lcBitmap.h"
 
 /* Definition for leetcode singly-linked list. */
 struct ListNode {
