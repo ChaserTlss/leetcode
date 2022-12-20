@@ -1,7 +1,13 @@
 #ifndef __LCBOX_H__
 #define __LCBOX_H__
+
+#ifndef __BOX_START_ELEMENT_SIZE__ 
 #define __BOX_START_ELEMENT_SIZE__ 32
+#endif
+
+#ifndef __BOX_REALLOC_SIZE__ 
 #define __BOX_REALLOC_SIZE__ 2
+#endif
 /* this box manager a char * array. */
 struct box {
 	size_t boxHead;
