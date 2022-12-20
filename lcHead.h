@@ -6,6 +6,8 @@
 #include <string.h>
 #include <limits.h>
 
+#include "lcBox.h"
+
 /* Definition for leetcode singly-linked list. */
 struct ListNode {
 	int val;
