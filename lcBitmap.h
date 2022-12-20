@@ -62,7 +62,11 @@ static inline size_t ffsBitmap(struct bitmap *bitmap)
 	if (i == DIV_ROUND_UP(bitmap->elementCount, __BITMAP_BITW__))
 		return -1;
 
-	return i * __BITMAP_BITW__ + ffs(bitmap->buffer[i]) - 1;
+	size_t index = i * __BITMAP_BITW__ + ffs(bitmap->buffer[i]) - 1;
+
+	if (index >= bitmap->elementCount)
+		return -1;
+	return index;
 }
 
 static inline void clearBitmap(struct bitmap *bitmap, size_t index)

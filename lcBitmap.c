@@ -73,7 +73,25 @@ void case_3(void)
 	free(bitmap);
 }
 
+void case_4(void)
+{
+	struct bitmap *bitmap = newBitmap(2);
+
+	setAllBitmap(bitmap, 1);
+
+	clearBitmap(bitmap, 0);
+	clearBitmap(bitmap, 1);
+
+	size_t index = ffsBitmap(bitmap);
+	if (index != -1) {
+		printf("%s failed, index %ld should be -1\n",
+				__func__, index);
+	}
+	free(bitmap);
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
+REGISTER_TEST_CASE(case_4);
 
