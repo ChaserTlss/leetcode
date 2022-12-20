@@ -47,6 +47,8 @@ static inline char **memoryBox(struct box *box, int index)
 }
 
 /* return the index of this function put */
+/* There is a box manager struct in this version,
+ *  more faster ! */
 int putLeftOrRight(int sl, int position, int lThesisSum, int *returnSize, struct box *box) {
 	/* finish the all rightThesis */
 	if (sl - position == lThesisSum) {
