@@ -46,8 +46,34 @@ void case_2(void)
 		printf("%s failed, index %ld should be 0\n",
 				__func__, index);
 	}
+	free(bitmap);
+}
+
+void case_3(void)
+{
+	struct bitmap *bitmap = newBitmap(10);
+
+	setAllBitmap(bitmap, 1);
+
+	bool r = getBitmap(bitmap, 3);
+	if (r != true) {
+		printf("%s failed, index 3 should be true\n", __func__);
+	}
+
+	r = getBitmap(bitmap, 1);
+	if (r != true) {
+		printf("%s failed, index 3 should be true\n", __func__);
+	}
+
+	size_t index = ffsBitmap(bitmap);
+	if (index != 0) {
+		printf("%s failed, index %ld should be 0\n",
+				__func__, index);
+	}
+	free(bitmap);
 }
 
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
+REGISTER_TEST_CASE(case_3);
 

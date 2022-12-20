@@ -48,7 +48,7 @@ static inline bool getBitmap(struct bitmap *bitmap, size_t index)
 	if (index > bitmap->elementCount)
 		return false;
 
-	return bitmap->buffer[index/__BITMAP_BITW__] &= 1 << (index%__BITMAP_BITW__);
+	return bitmap->buffer[index/__BITMAP_BITW__] & 1 << (index%__BITMAP_BITW__);
 }
 
 static inline size_t ffsBitmap(struct bitmap *bitmap)
@@ -63,6 +63,13 @@ static inline size_t ffsBitmap(struct bitmap *bitmap)
 		return -1;
 
 	return i * __BITMAP_BITW__ + ffs(bitmap->buffer[i]) - 1;
+}
+
+static inline void clearBitmap(struct bitmap *bitmap, size_t index)
+{
+	if (index > bitmap->elementCount)
+		return;
+	bitmap->buffer[index/__BITMAP_BITW__] &= ~(1 << (index%__BITMAP_BITW__));
 }
 
 #endif
