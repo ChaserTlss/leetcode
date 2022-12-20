@@ -1,26 +1,94 @@
 #include "lcHead.h"
 
-bool isSubString(char *s, char **words, int wordsSize, struct bitmap *bitmap)
+struct hashTable {
+	int start;
+	int end;
+};
+
+struct myOb {
+	struct bitmap *bitmap;
+	struct hashTable *hashTable;
+	int *remain;
+	int *repeat;
+	int wordsl;
+};
+
+static inline void __whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
 {
+	struct hashTable *hashTable = myOb->hashTable;
+	int *repeat = myOb->repeat;
+	int i = 0;
+	int start = wordsSize;
+	size_t wordsl = myOb->wordsl;
+	for (i = 0; i < wordsSize; i++) {
+		int cmpV = strncmp(words[i], s + offset, wordsl);
+		if (cmpV == 0 && start == wordsSize) {
+			start = i;
+			if (repeat[start] != 0) {
+				i = repeat[start];
+				break;
+			}
+		} else if (cmpV > 0) {
+			break;
+		}
+	}
+
+	hashTable[offset].start = start;
+	hashTable[offset].end = i;
+	repeat[start] = i;
+}
+
+static inline struct hashTable *whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
+{
+	struct hashTable *hashTable = myOb->hashTable;
+
+	if (hashTable[offset].end != 0)
+		goto RETURN;
+
+	__whichCmp(s, offset, words, wordsSize, myOb);
+RETURN:
+
+	return &hashTable[offset];
+}
+
+bool isSubString(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
+{
+	struct bitmap *bitmap = myOb->bitmap;
 	setAllBitmap(bitmap, 1);
 
-	while (strlen(s) && ffsBitmap(bitmap) != -1) {
+	int *remain = myOb->remain;
+	memset(remain, 0, sizeof(*remain) * (wordsSize + 1));
+
+	size_t wordsl = myOb->wordsl;
+
+	while (ffsBitmap(bitmap) != -1) {
+		struct hashTable *ret = whichCmp(s, offset, words, wordsSize, myOb);
+
 		int i = 0;
-		for (i = 0; i < wordsSize; i++) {
-			if (!getBitmap(bitmap, i)) {
-				continue;
-			} else if (!strncmp(words[i], s, strlen(words[i]))) {
+		for (i = ret->start + remain[ret->start]; i < ret->end; i++) {
+			if (getBitmap(bitmap, i)) {
 				clearBitmap(bitmap, i);
-				s += strlen(words[i]);
+				offset += wordsl;
+				remain[ret->start] += 1;
 				break;
 			}
 		}
-
-		if (i == wordsSize)
+		/* not compare any words */
+		if (ret->start > ret->end) {
 			break;
+		}
+		/* any words are used */
+		if (i == ret->end) {
+			break;
+		}
 	}
 
 	return ffsBitmap(bitmap) == -1;
+}
+
+int comp(const void *a, const void *b)
+{
+	return strcmp(*(char **)a, *(char **)b);
 }
 
 int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
@@ -29,21 +97,37 @@ int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
 		return NULL;
 
 	struct box *box = newBox(sizeof(int));
-	struct bitmap *bitmap = newBitmap(wordsSize);
+	struct myOb myOb;
+
+	myOb.bitmap = newBitmap(wordsSize);
+	myOb.remain = malloc(sizeof(*myOb.remain) * (wordsSize + 1));
+	memset(myOb.remain, 0, sizeof(*myOb.remain) * (wordsSize + 1));
+
+	myOb.repeat = malloc(sizeof(*myOb.repeat) * (wordsSize + 1));
+	memset(myOb.repeat, 0, sizeof(*myOb.repeat) * (wordsSize + 1));
+	myOb.hashTable = malloc(sizeof(*myOb.hashTable) * strlen(s));
+	memset(myOb.hashTable, 0, sizeof(*myOb.hashTable) * strlen(s));
+
+	myOb.wordsl = strlen(words[0]);
+
+	qsort(words, wordsSize, sizeof(char **), comp);
 
 	for (int i = 0; i < strlen(s); i++) {
-		if (isSubString(s + i, words, wordsSize, bitmap)) {
+        if (strlen(s) - i < wordsSize * myOb.wordsl)
+			break;
+		if (isSubString(s, i, words, wordsSize, &myOb)) {
 			inputBox(box, &i);
 		}
-		if (strlen(s) - i <= wordsSize * strlen(words[0]))
-			break;
 	}
 
 	void *t;
 	size_t tReturnSize;
 	expectBox(box, &t, &tReturnSize);
 	*returnSize = (int)tReturnSize;
-	free(bitmap);
+	free(myOb.bitmap);
+	free(myOb.hashTable);
+	free(myOb.remain);
+	free(myOb.repeat);
 	return t;
 }
 
