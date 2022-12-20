@@ -7,7 +7,8 @@ int putLeftOrRight(int sl, int position, int lThesisSum, int *returnSize, struct
 	/* finish the all rightThesis */
 	if (sl - position == lThesisSum) {
 		*returnSize = 1;
-		char **stringPoint = inputBox(box, malloc(sizeof(char) * sl + 1));
+		char *string = malloc(sizeof(char) * sl + 1);
+		char **stringPoint = inputBox(box, &string);
 		for (int i = position; i < sl; i++) {
 			(*stringPoint)[i] = ')';
 		}
@@ -42,13 +43,15 @@ char ** generateParenthesis(int n, int* returnSize){
 		*returnSize = 0;
 		return NULL;
 	}
-	struct box *box = newBox();
+	struct box *box = newBox(sizeof(char *));
 
 	putLeftOrRight(n*2, 0, 0, returnSize, box);
 
 
-	char **ret;
-	expectBox(box, &ret, returnSize);
+	void *ret;
+	size_t tReturnSize;
+	expectBox(box, &ret, &tReturnSize);
+	*returnSize = (int)tReturnSize;
 	return ret;
 }
 
