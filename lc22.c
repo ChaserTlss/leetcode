@@ -52,49 +52,110 @@ char ** generateParenthesis(int n, int* returnSize){
 	return ret;
 }
 
+#define isLeft(a) (a == '(' || a == '[' || a == '{')
+#define isRight(a) (a == ')' || a == ']' || a == '}')
+
+bool isValid(char * s){
+	int sl = strlen(s);
+	char *stack = malloc(sl);
+	int head = 0;
+
+	for (int i = 0; i < sl; i++) {
+		if (isLeft(s[i])) {
+			stack[head++] = s[i];
+		} else if (isRight(s[i])) {
+			bool valid = 0;
+			if (!head)
+				goto FAILED;
+			switch (stack[--head]) {
+				case '(' :
+					valid = s[i]  == ')';
+					break;
+				case '[' :
+					valid = s[i]  == ']';
+					break;
+				case '{' :
+					valid = s[i]  == '}';
+					break;
+				default:
+					/* we will not in here */
+					break;
+			}
+			if (!valid)
+				goto FAILED;
+		}
+	}
+	free(stack);
+	return head == 0;
+FAILED:
+	free(stack);
+	return false;
+}
+
 void case_1(void)
 {
 	int retSize = 0;
 	int testN = 1;
+	int keyRetSize = 1;
 	char **ret = generateParenthesis(testN, &retSize);
 
-	printf("\n++++++++++%d++++++++++\n", testN);
 	for (int i = 0; i < retSize; i++) {
-//		printf("%s\n", ret[i]);
+		if (!isValid(ret[i])) {
+			printf("%s failed, ret[%d]: %s\n",
+					__func__, i, ret[i]);
+		}
 		free(ret[i]);
 	}
+
+	if (retSize != keyRetSize) {
+		printf("%s failed, size %d should be %d\n",
+				__func__, retSize, keyRetSize);
+	}
 	free(ret);
-	printf("retSize = %d\n", retSize);
 }
 
 void case_2(void)
 {
 	int retSize = 0;
 	int testN = 3;
+	int keyRetSize = 5;
 	char **ret = generateParenthesis(testN, &retSize);
 
-	printf("\n++++++++++%d++++++++++\n", testN);
 	for (int i = 0; i < retSize; i++) {
-//		printf("%s\n", ret[i]);
+		if (!isValid(ret[i])) {
+			printf("%s failed, ret[%d]: %s\n",
+					__func__, i, ret[i]);
+		}
 		free(ret[i]);
 	}
+
+	if (retSize != keyRetSize) {
+		printf("%s failed, size %d should be %d\n",
+				__func__, retSize, keyRetSize);
+	}
 	free(ret);
-	printf("retSize = %d\n", retSize);
 }
 
 void case_3(void)
 {
 	int retSize = 0;
 	int testN = 8;
+	int keyRetSize = 1430;
 	char **ret = generateParenthesis(testN, &retSize);
 
-	printf("++++++++++%d++++++++++\n", testN);
 	for (int i = 0; i < retSize; i++) {
-//		printf("%s\n", ret[i]);
+		if (!isValid(ret[i])) {
+			printf("%s failed, ret[%d]: %s\n",
+					__func__, i, ret[i]);
+		}
 		free(ret[i]);
 	}
+
+	if (retSize != keyRetSize) {
+		printf("%s failed, size %d should be %d\n",
+				__func__, retSize, keyRetSize);
+	}
 	free(ret);
-	printf("retSize = %d\n", retSize);
 }
 
 REGISTER_TEST_CASE(case_1);
