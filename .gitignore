@@ -1,3 +1,5 @@
 a.out
 perf.data
 *.log
+perf.data.old
+kernel.svg
