@@ -90,8 +90,35 @@ void case_4(void)
 	free(bitmap);
 }
 
+void case_5(void)
+{
+	struct bitmap *bitmap = newBitmap(120);
+
+	setAllBitmap(bitmap, 1);
+
+	clearBitmap(bitmap, 6);
+	bool r = getBitmap(bitmap, 6);
+	if (r != false) {
+		printf("%s failed, index 6 should be false\n", __func__);
+	}
+
+	clearBitmap(bitmap, 64);
+	r = getBitmap(bitmap, 64);
+	if (r != false) {
+		printf("%s failed, index 49 should be false\n", __func__);
+	}
+
+	if (bitmap->buffer[1] != ~(1 << 0)) {
+		printf("%s failed, buffer[1] 0x%llx should be 0x%llx\n",
+				__func__, bitmap->buffer[1], ~(1ull<<7));
+	}
+
+	free(bitmap);
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
 REGISTER_TEST_CASE(case_4);
+REGISTER_TEST_CASE(case_5);
 

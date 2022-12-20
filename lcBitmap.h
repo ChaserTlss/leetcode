@@ -5,8 +5,8 @@
 #include <string.h>
 
 #define DIV_ROUND_UP(a, b) ((a + b - 1) / b)
-typedef unsigned long long int bitmap_t;
-#define __BITMAP_BITW__ (sizeof(bitmap_t) * 4)
+typedef unsigned int bitmap_t;
+#define __BITMAP_BITW__ (sizeof(bitmap_t) * 8)
 
 struct bitmap {
 	size_t elementCount;
@@ -40,7 +40,7 @@ static inline void setBitmap(struct bitmap *bitmap, size_t index)
 	if (index > bitmap->elementCount)
 		return;
 
-	bitmap->buffer[index/__BITMAP_BITW__] |= 1 << (index%__BITMAP_BITW__);
+	bitmap->buffer[index/__BITMAP_BITW__] |= (bitmap_t)1 << (index%__BITMAP_BITW__);
 }
 
 static inline bool getBitmap(struct bitmap *bitmap, size_t index)
@@ -48,7 +48,7 @@ static inline bool getBitmap(struct bitmap *bitmap, size_t index)
 	if (index > bitmap->elementCount)
 		return false;
 
-	return bitmap->buffer[index/__BITMAP_BITW__] & 1 << (index%__BITMAP_BITW__);
+	return bitmap->buffer[index/__BITMAP_BITW__] & (bitmap_t)1 << (index%__BITMAP_BITW__);
 }
 
 static inline size_t ffsBitmap(struct bitmap *bitmap)
@@ -73,7 +73,7 @@ static inline void clearBitmap(struct bitmap *bitmap, size_t index)
 {
 	if (index > bitmap->elementCount)
 		return;
-	bitmap->buffer[index/__BITMAP_BITW__] &= ~(1 << (index%__BITMAP_BITW__));
+	bitmap->buffer[index/__BITMAP_BITW__] &= ~((bitmap_t)1 << (index%__BITMAP_BITW__));
 }
 
 #endif
