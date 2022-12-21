@@ -1,122 +1,69 @@
 #include "lcHead.h"
 
-struct hashTable {
-	int start;
-	int end;
-};
-
 struct myOb {
-	struct bitmap *bitmap;
-	struct hashTable *hashTable;
-	int *remain;
-	int *repeat;
+	int *repeatMap;
+	int *repeatMapTemp;
+	int *hashTable;
 	int wordsl;
+	int wordsSize;
 };
 
-int compFP(const void *a, const void *b)
+int comp(const void *a, const void *b)
 {
-	return strncmp(*(char **)a, *(char **)b, strlen(*(char **)a)) + 1;
+	return strncmp(*(char **)a, *(char **)b, strlen(*(char **)b));
 }
 
-static inline void __whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
+static inline int __whichCmp(char *s, size_t offset, char **words, int wordsSize)
 {
-	struct hashTable *hashTable = myOb->hashTable;
-	int *repeat = myOb->repeat;
-	int start = wordsSize;
-	size_t wordsl = myOb->wordsl;
-	char *key = s + offset;
+	void *key = s + offset;
 
-	size_t index = findP(&key, words, wordsSize, sizeof(words[0]), compFP);
+	void *ret = bsearch(&key, words, wordsSize, sizeof(words[0]), comp);
 
-	if (index < wordsSize && !strncmp(words[index], key, wordsl)) {
-		start = index;
-		if (repeat[start] == 0) {
-			int i;
-			for (i = start + 1; i < wordsSize; i++) {
-				if (strncmp(words[i], key, wordsl))
-					break;
-			}
-			repeat[start] = i;
-		}
+	if (ret) {
+		return ((int)(ret - (void *)words)) / sizeof(words[0]);
+	} else {
+		return wordsSize;
 	}
 
-	hashTable[offset].start = start;
-	hashTable[offset].end = repeat[start];
 }
-void case_5(void)
+
+static inline int whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
 {
-	char *s = "123";
-	char *words[] = { "123", };
-	int repeat[ARRAYSIZE(words) + 1] = {0};
-	struct hashTable hashTable[ARRAYSIZE(words) + 1] = {{0}};
-	size_t keyStart = 0;
-	size_t keyEnd = 1;
+	int *hashTable = myOb->hashTable;
 
-	struct myOb myOb;
-	myOb.repeat = repeat;
-	myOb.hashTable = hashTable;
-	myOb.wordsl = strlen(words[0]);
-	__whichCmp(s, 0, words, ARRAYSIZE(words), &myOb);
-
-	if (hashTable[0].start != keyStart || hashTable[0].end != keyEnd)
-		printf("%s is failed, start %d should be %ld, end %d should be %ld\n",
-				__func__, hashTable[0].start, keyStart, hashTable[0].end, keyEnd);
-}
-REGISTER_TEST_CASE(case_5);
-
-static inline struct hashTable *whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
-{
-	struct hashTable *hashTable = myOb->hashTable;
-
-	if (hashTable[offset].end != 0)
+	if (hashTable[offset] != 0)
 		goto RETURN;
 
-	__whichCmp(s, offset, words, wordsSize, myOb);
+	int ret =  __whichCmp(s, offset, words, wordsSize);
+	hashTable[offset] = ret + 1;
 RETURN:
 
-	return &hashTable[offset];
+	return hashTable[offset] - 1;
 }
 
 bool isSubString(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
 {
-	struct bitmap *bitmap = myOb->bitmap;
-	setAllBitmap(bitmap, 1);
-
-	int *remain = myOb->remain;
-	memset(remain, 0, sizeof(*remain) * (wordsSize + 1));
-
 	size_t wordsl = myOb->wordsl;
-	const size_t subStringl = wordsl * wordsSize;
+	const size_t subStringl = wordsl * myOb->wordsSize;
 	size_t startOffset = offset;
 
-	while (offset - startOffset < subStringl) {
-		struct hashTable *ret = whichCmp(s, offset, words, wordsSize, myOb);
+	int *repeatMap = myOb->repeatMapTemp;
+	memcpy(repeatMap, myOb->repeatMap, wordsSize * sizeof(int));
 
-		int i = 0;
-		for (i = ret->start + remain[ret->start]; i < ret->end; i++) {
-			if (getBitmap(bitmap, i)) {
-				clearBitmap(bitmap, i);
-				offset += wordsl;
-				remain[ret->start] += 1;
-				break;
-			}
-		}
-		/* not compare any words */
-		if (ret->start > ret->end) {
+	while (offset - startOffset < subStringl) {
+		int ret = whichCmp(s, offset, words, wordsSize, myOb);
+
+		if (ret >= wordsSize)
 			break;
-		}
-		/* any words are used */
-		if (i == ret->end) {
+
+		if (repeatMap[ret] == -1)
 			break;
-		}
+
+		repeatMap[ret] -= 1;
+		offset += wordsl;
 	}
 
 	return offset - startOffset == subStringl;
-}
-
-int compQS(const void *a, const void *b)
-{
-	return strcmp(*(char **)a, *(char **)b);
 }
 
 int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
@@ -127,23 +74,23 @@ int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
 	struct box *box = newBox(sizeof(int));
 	struct myOb myOb;
 
-	myOb.bitmap = newBitmap(wordsSize);
-	myOb.remain = malloc(sizeof(*myOb.remain) * (wordsSize + 1));
-	memset(myOb.remain, 0, sizeof(*myOb.remain) * (wordsSize + 1));
+	myOb.wordsSize = wordsSize;
 
-	myOb.repeat = malloc(sizeof(*myOb.repeat) * (wordsSize + 1));
-	memset(myOb.repeat, 0, sizeof(*myOb.repeat) * (wordsSize + 1));
-	myOb.hashTable = malloc(sizeof(*myOb.hashTable) * strlen(s));
-	memset(myOb.hashTable, 0, sizeof(*myOb.hashTable) * strlen(s));
+	myOb.hashTable = malloc(sizeof(int) * strlen(s));
+	memset(myOb.hashTable, 0, sizeof(int) * strlen(s));
 
 	myOb.wordsl = strlen(words[0]);
 
-	qsort(words, wordsSize, sizeof(char **), compQS);
+	qsort(words, wordsSize, sizeof(char **), comp);
+
+	int repeatMapSize = 0;
+	myOb.repeatMap = deduplicate(words, wordsSize, sizeof(char **), comp, &repeatMapSize);
+	myOb.repeatMapTemp = malloc(sizeof(int) * repeatMapSize);
 
 	for (int i = 0; i < strlen(s); i++) {
         if (strlen(s) - i < wordsSize * myOb.wordsl)
 			break;
-		if (isSubString(s, i, words, wordsSize, &myOb)) {
+		if (isSubString(s, i, words, repeatMapSize, &myOb)) {
 			inputBox(box, &i);
 		}
 	}
@@ -152,10 +99,9 @@ int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
 	size_t tReturnSize;
 	expectBox(box, &t, &tReturnSize);
 	*returnSize = (int)tReturnSize;
-	free(myOb.bitmap);
 	free(myOb.hashTable);
-	free(myOb.remain);
-	free(myOb.repeat);
+	free(myOb.repeatMap);
+	free(myOb.repeatMapTemp);
 	return t;
 }
 
@@ -242,8 +188,58 @@ void case_4(void)
 	}
 	free(ret);
 }
+void case_5(void)
+{
+	char *s = "123ads";
+	char *words[] = { "123", };
+	size_t keyStart = 0;
+
+	int ret = __whichCmp(s, 0, words, ARRAYSIZE(words));
+
+	if (ret != keyStart)
+		printf("%s is failed, ret %d should be %ld\n",
+				__func__, ret, keyStart);
+}
+
+void case_6(void)
+{
+	char *s = "123as";
+	char *words[] = { "321", "123"};
+	size_t keyStart = 1;
+
+	int ret = __whichCmp(s, 0, words, ARRAYSIZE(words));
+
+	if (ret != keyStart)
+		printf("%s is failed, ret %d should be %ld\n",
+				__func__, ret, keyStart);
+}
+
+void case_7(void)
+{
+	char *s = "wordgoodgoodgoodbestword";
+	char *words[] = {"word","good","best","good"};
+
+	int key[] = {8};
+	int returnSize = 0;
+	int *ret = findSubstring(s, words, ARRAYSIZE(words), &returnSize);
+
+	if (returnSize != ARRAYSIZE(key))
+		printf("%s is failed. returnSize %d should be %ld.\n",
+				__func__, returnSize, ARRAYSIZE(key));
+
+	for (int i = 0; i < returnSize; i++) {
+		if (ret[i] != key[i])
+			printf("%s is failed. ret[%d] %d should be key[%d] %d.\n",
+					__func__, i, ret[i], i, key[i]);
+	}
+	free(ret);
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
 REGISTER_TEST_CASE(case_4);
+REGISTER_TEST_CASE(case_5);
+REGISTER_TEST_CASE(case_6);
+REGISTER_TEST_CASE(case_7);
 
