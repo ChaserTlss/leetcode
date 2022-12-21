@@ -5,7 +5,7 @@ int compare(const void *item, const void *key)
 {
 	int r = *(int *)item - *(int *)key;
 
-	return r == 0 ? -1 : r;
+	return r;
 }
 
 /* this compare will get the first postion */
@@ -13,7 +13,7 @@ int compareF(const void *item, const void *key)
 {
 	int r = *(int *)item - *(int *)key;
 
-	return r == 0 ? 1 : r;
+	return r + 1;
 }
 
 
