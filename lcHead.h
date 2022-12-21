@@ -9,6 +9,7 @@
 #include "lcBox.h"
 #include "lcBitmap.h"
 #include "lcFindPostionBS.h"
+#include "lcDeduplicate.h"
 
 /* Definition for leetcode singly-linked list. */
 struct ListNode {
