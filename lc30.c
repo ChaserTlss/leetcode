@@ -60,8 +60,10 @@ bool isSubString(char *s, size_t offset, char **words, int wordsSize, struct myO
 	memset(remain, 0, sizeof(*remain) * (wordsSize + 1));
 
 	size_t wordsl = myOb->wordsl;
+	const size_t subStringl = wordsl * wordsSize;
+	size_t startOffset = offset;
 
-	while (ffsBitmap(bitmap) != -1) {
+	while (offset - startOffset < subStringl) {
 		struct hashTable *ret = whichCmp(s, offset, words, wordsSize, myOb);
 
 		int i = 0;
@@ -83,7 +85,7 @@ bool isSubString(char *s, size_t offset, char **words, int wordsSize, struct myO
 		}
 	}
 
-	return ffsBitmap(bitmap) == -1;
+	return offset - startOffset == subStringl;
 }
 
 int comp(const void *a, const void *b)
