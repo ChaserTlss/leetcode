@@ -30,6 +30,9 @@ static inline void __whichCmp(char *s, size_t offset, char **words, int wordsSiz
 			}
 		} else if (cmpV > 0) {
 			break;
+		} else if (repeat[i] != 0) {
+			/* there are some repeat element in words[], we can jump it */
+			i = repeat[i] - 1;
 		}
 	}
 
