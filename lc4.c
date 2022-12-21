@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
-
+#include "lcHead.h"
 /* find a position of num in n1 */
 /* n1 must be ordinal array */
 #if 0
@@ -112,186 +108,80 @@ float findedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size
 
 }
 
-#define CASE_1
-#ifdef CASE_1
 void case_1(void) {
 	int c1[] = { 1, 6};
 	int c2[] = { 5 };
-	printf("5 = %f\n", findedianSortedArrays(c1, 2, c2, 1));
+	float key = 5.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_2
-#ifdef CASE_2
 void case_2(void) {
-	int c3[] = { 3, 9, 12};
-	int c4[] = { 1, 6, 10, 67,};
-	printf("9 = %f\n", findedianSortedArrays(c3, 3, c4, 4));
+	int c1[] = { 3, 9, 12};
+	int c2[] = { 1, 6, 10, 67,};
+	float key = 9.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_3
-#ifdef CASE_3
-void case_3(void)
-{
-	int c1[] = { 1, 1, 3};
-	int c2 = 2;
-	printf("2, %d\n", findPostion(c1, 3, c2));
-}
-#endif
-
-#define CASE_4
-#ifdef CASE_4
-void case_4(void)
-{
-	int c1[] = { 1, 1, 3};
-	int c2 = 0;
-	printf("0, %d\n", findPostion(c1, 3, c2));
-}
-#endif
-
-#define CASE_5
-#ifdef CASE_5
-void case_5(void)
-{
-	int c1[] = { 1, 1, 3};
-	int c2 = 1;
-	printf("2, %d\n", findPostion(c1, 3, c2));
-}
-#endif
-
-#define CASE_6
-#ifdef CASE_6
-void case_6(void)
-{
-	int c1[] = { 1, 1, 3};
-	int c2 = 3;
-	printf("3, %d\n", findPostion(c1, 3, c2));
-}
-#endif
-
-#define CASE_7
-#ifdef CASE_7
 void case_7(void)
 {
 	int c1[] = {1, 2};
 	int c2[] = {3, 4};
-	printf("2.5, %f\n", findedianSortedArrays(c1, 2, c2, 2));
+	float key = 2.5;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_8
-#ifdef CASE_8
-void case_8(void)
-{
-	int c1[] = {1};
-	printf("1, %d\n", findPostion(c1, 1, 1));
-	printf("0, %d\n", findPostion(c1, 1, 0));
-	printf("1, %d\n", findPostion(c1, 1, 2));
-}
-#endif
-
-#define CASE_9
-#ifdef CASE_9
 void case_9(void)
 {
 	int c1[] = {};
 	int c2[] = {4};
-	printf("4, %f\n", findedianSortedArrays(c1, 0, c2, 1));
+	float key = 4.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_10
-#ifdef CASE_10
 void case_10(void)
 {
 	int c1[] = {4};
 	int c2[] = {4};
-	printf("4, %f\n", findedianSortedArrays(c1, 1, c2, 1));
+	float key = 4.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_11
-#ifdef CASE_11
 void case_11(void)
 {
 	int c1[] = {2, 3};
 	int c2[] = {1};
-	printf("2, %f\n", findedianSortedArrays(c1, 2, c2, 1));
+	float key = 2.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-#define CASE_12
-#ifdef CASE_12
-void case_12(void)
-{
-	int c1[] = {2, 3};
-	int c2 = 1;
-	printf("0, %d\n", findPostion(c1, 2, c2));
-}
-#endif
 
-#define CASE_13
-#ifdef CASE_13
 void case_13(void)
 {
 	int c1[] = {1, 2, 4, 5, 6, 7};
 	int c2[] = {3};
-	printf("4, %f\n", findedianSortedArrays(c1, 6, c2, 1));
+	float key = 4.0;
+	float ret = findedianSortedArrays(c1, ARRAYSIZE(c1), c2, ARRAYSIZE(c2));
+	if (ret != key)
+		printf("%s failed: %f should be %f\n", __func__, ret, key);
 }
-#endif
 
-int main(void)
-{
-#ifdef CASE_1
-	case_1();
-#endif
+REGISTER_TEST_CASE(case_1);
+REGISTER_TEST_CASE(case_2);
+REGISTER_TEST_CASE(case_7);
+REGISTER_TEST_CASE(case_9);
+REGISTER_TEST_CASE(case_10);
+REGISTER_TEST_CASE(case_11);
+REGISTER_TEST_CASE(case_13);
 
-#ifdef CASE_2
-	case_2();
-#endif
-
-#ifdef CASE_3
-	case_3();
-#endif
-
-#ifdef CASE_4
-	case_4();
-#endif
-
-#ifdef CASE_5
-	case_5();
-#endif
-
-#ifdef CASE_6
-	case_6();
-#endif
-
-#ifdef CASE_7
-	case_7();
-#endif
-
-#ifdef CASE_8
-	case_8();
-#endif
-
-#ifdef CASE_9
-	case_9();
-#endif
-
-#ifdef CASE_10
-	case_10();
-#endif
-
-#ifdef CASE_11
-	case_11();
-#endif
-
-#ifdef CASE_12
-	case_12();
-#endif
-
-#ifdef CASE_13
-	case_13();
-#endif
-}
