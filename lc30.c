@@ -13,33 +13,56 @@ struct myOb {
 	int wordsl;
 };
 
+int compFP(const void *a, const void *b)
+{
+	return strncmp(*(char **)a, *(char **)b, strlen(*(char **)a)) + 1;
+}
+
 static inline void __whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
 {
 	struct hashTable *hashTable = myOb->hashTable;
 	int *repeat = myOb->repeat;
-	int i = 0;
 	int start = wordsSize;
 	size_t wordsl = myOb->wordsl;
-	for (i = 0; i < wordsSize; i++) {
-		int cmpV = strncmp(words[i], s + offset, wordsl);
-		if (cmpV == 0 && start == wordsSize) {
-			start = i;
-			if (repeat[start] != 0) {
-				i = repeat[start];
-				break;
+	char *key = s + offset;
+
+	size_t index = findP(&key, words, wordsSize, sizeof(words[0]), compFP);
+
+	if (index < wordsSize && !strncmp(words[index], key, wordsl)) {
+		start = index;
+		if (repeat[start] == 0) {
+			int i;
+			for (i = start + 1; i < wordsSize; i++) {
+				if (strncmp(words[i], key, wordsl))
+					break;
 			}
-		} else if (cmpV > 0) {
-			break;
-		} else if (repeat[i] != 0) {
-			/* there are some repeat element in words[], we can jump it */
-			i = repeat[i] - 1;
+			repeat[start] = i;
 		}
 	}
 
 	hashTable[offset].start = start;
-	hashTable[offset].end = i;
-	repeat[start] = i;
+	hashTable[offset].end = repeat[start];
 }
+void case_5(void)
+{
+	char *s = "123";
+	char *words[] = { "123", };
+	int repeat[ARRAYSIZE(words) + 1] = {0};
+	struct hashTable hashTable[ARRAYSIZE(words) + 1] = {{0}};
+	size_t keyStart = 0;
+	size_t keyEnd = 1;
+
+	struct myOb myOb;
+	myOb.repeat = repeat;
+	myOb.hashTable = hashTable;
+	myOb.wordsl = strlen(words[0]);
+	__whichCmp(s, 0, words, ARRAYSIZE(words), &myOb);
+
+	if (hashTable[0].start != keyStart || hashTable[0].end != keyEnd)
+		printf("%s is failed, start %d should be %ld, end %d should be %ld\n",
+				__func__, hashTable[0].start, keyStart, hashTable[0].end, keyEnd);
+}
+REGISTER_TEST_CASE(case_5);
 
 static inline struct hashTable *whichCmp(char *s, size_t offset, char **words, int wordsSize, struct myOb *myOb)
 {
@@ -91,7 +114,7 @@ bool isSubString(char *s, size_t offset, char **words, int wordsSize, struct myO
 	return offset - startOffset == subStringl;
 }
 
-int comp(const void *a, const void *b)
+int compQS(const void *a, const void *b)
 {
 	return strcmp(*(char **)a, *(char **)b);
 }
@@ -115,7 +138,7 @@ int *findSubstring(char *s, char **words, int wordsSize, int *returnSize)
 
 	myOb.wordsl = strlen(words[0]);
 
-	qsort(words, wordsSize, sizeof(char **), comp);
+	qsort(words, wordsSize, sizeof(char **), compQS);
 
 	for (int i = 0; i < strlen(s); i++) {
         if (strlen(s) - i < wordsSize * myOb.wordsl)
