@@ -167,6 +167,19 @@ void case_12(void)
 	}
 }
 
+void case_13(void)
+{
+	int a[] = {1, 2,};
+	int key = 1;
+	size_t rightPostion = 0;
+
+	size_t i = findP(&key, a, ARRAYSIZE(a), sizeof(a[0]), compareF);
+	if (i != rightPostion) {
+		printf("%s failed: i %ld should be %ld\n",
+				__func__, i, rightPostion);
+	}
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
@@ -179,4 +192,5 @@ REGISTER_TEST_CASE(case_9);
 REGISTER_TEST_CASE(case_10);
 REGISTER_TEST_CASE(case_11);
 REGISTER_TEST_CASE(case_12);
+REGISTER_TEST_CASE(case_13);
 
