@@ -1,65 +1,18 @@
 #include "lcHead.h"
 /* find a position of num in n1 */
 /* n1 must be ordinal array */
-#if 0
-int findPostion(int* n1, int nsize, int num)
+
+int compare(const void *item, const void *key)
 {
-	int p = nsize / 2; /* position */
-	if (nsize == 1) {
-		if (n1[0] > num)
-			return 0;
-		else
-			return 1;
-	}
-
-	while (n1[p - 1]  > num || n1[p]  <= num) {
-		if (p - 1 < 0 || p - 1 >= nsize || p < 0 || p >= nsize) {
-			printf("warning p %d\n", p);
-		}
-
-		if (p == nsize - 1) {
-			p += 1;
-			break;
-		}
-
-		p = (n1[p] > num) ? (p / 2) : ((p + nsize) / 2);
-
-		if (p == 0) {
-			 break;
-		}
-	}
-	return p;
-}
-#else
-
-int __findPostion(int *n1, int nsize, int num, int bias)
-{
-	int p = nsize / 2;
-
-	if (p == 0) {
-		if (nsize == 0 || n1[0] > num)
-			return bias;
-		else
-			return bias + 1;
-	}
-
-	if (n1[p] > num && n1[p - 1] <= num)
-		return p + bias;
-
-	if (n1[p] > num)
-		return __findPostion(n1, nsize - p - 1, num, bias);
-	else
-		return __findPostion(&n1[p + 1], nsize - (p + 1), num, bias + p + 1);
-
+	return *(int *)item - *(int *)key;
 }
 
 int findPostion(int* n1, int nsize, int num)
 {
 	if (nsize == 0)
 		return 0;
-	return __findPostion(n1, nsize, num, 0);
+	return findPostionBS(&num, n1, nsize, sizeof(int), compare, 0);
 }
-#endif
 
 int findValue(int* nums1, int nums1Size, int* nums2, int nums2Size, int k)
 {
