@@ -33,8 +33,7 @@ int **threeSum(int *nums, int numsSize, int *returnSize, int **returnColumnSizes
 {
 	qsort(nums, numsSize, sizeof(int), compare);
 
-	int size = numsSize / 3 * (numsSize - 1) / 2 * (numsSize - 2);
-	printf("%d\n", size);
+	ssize_t size = 20000;//(ssize_t)numsSize / 3 * (numsSize - 1) / 2 * (numsSize - 2);
 
 	int **ret = malloc(sizeof(int *) * size);
 	int retHead = 0;
