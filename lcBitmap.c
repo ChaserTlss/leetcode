@@ -102,15 +102,15 @@ void case_5(void)
 		printf("%s failed, index 6 should be false\n", __func__);
 	}
 
-	clearBitmap(bitmap, 64);
-	r = getBitmap(bitmap, 64);
+	clearBitmap(bitmap, 32);
+	r = getBitmap(bitmap, 32);
 	if (r != false) {
 		printf("%s failed, index 49 should be false\n", __func__);
 	}
 
 	if (bitmap->buffer[1] != ~(1 << 0)) {
-		printf("%s failed, buffer[1] 0x%llx should be 0x%llx\n",
-				__func__, bitmap->buffer[1], ~(1ull<<7));
+		printf("%s failed, buffer[1] 0x%x should be 0x%x\n",
+				__func__, bitmap->buffer[1], ~(1u<<0));
 	}
 
 	free(bitmap);
