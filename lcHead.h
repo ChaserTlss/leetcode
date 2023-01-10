@@ -7,6 +7,7 @@
 #include <limits.h>
 
 #include "lcBox.h"
+#include "lcBox2d.h"
 #include "lcBitmap.h"
 #include "lcFindPostionBS.h"
 #include "lcDeduplicate.h"
