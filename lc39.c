@@ -22,9 +22,48 @@ All elements of candidates are distinct.
  * The sizes of the arrays are returned as *returnColumnSizes array.
  * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
  */
+void combinationSumHelper(int *candidates, int candidatesSize, int target, struct box2d *box2d, struct box *box)
+{
+
+	for (int i = 0; i < candidatesSize; i++) {
+		if (candidates[i] == target) {
+			inputBox2d1d(box2d, box);
+			inputBox2d(box2d, &candidates[i], headBox2d(box2d) - 1);
+		} else if (candidates[i] > target) {
+			break;
+		} else {
+			inputBox(box, &candidates[i]);
+			combinationSumHelper(candidates + i, candidatesSize - i, target - candidates[i], box2d, box);
+			delBox(box, headBox(box) - 1);
+		}
+	}
+}
+
+int compare(const void *a, const void *b)
+{
+	return *(int*)a - *(int*)b;
+}
+
 int **combinationSum(int *candidates, int candidatesSize, int target, int *returnSize, int **returnColumnSizes)
 {
-	return NULL;
+	struct box2d *box2d = newBox2d(sizeof(int));
+	struct box *box = newBox(sizeof(int));
+
+	qsort(candidates, candidatesSize, sizeof(int), compare);
+	combinationSumHelper(candidates, candidatesSize, target, box2d, box);
+
+	size_t retSize = 0;
+	size_t *retColSize = NULL;
+	int **ret = expectBox2d(box2d, &retSize, &retColSize);
+	*returnColumnSizes = malloc(sizeof(int) * retSize);
+	for (int i = 0; i < retSize; i++) {
+		(*returnColumnSizes)[i] = retColSize[i];
+	}
+	*returnSize = retSize;
+
+	free(retColSize);
+	destoryBox(box);
+	return ret;
 }
 
 /********** test **********/
@@ -66,6 +105,9 @@ void case_1(void)
 				}
 			}
 		}
+		free(ret[i]);
 	}
+	free(returnColumnSizes);
+	free(ret);
 }
 REGISTER_TEST_CASE(case_1);
