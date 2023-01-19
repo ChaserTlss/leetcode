@@ -3,3 +3,4 @@ perf.data
 *.log
 perf.data.old
 kernel.svg
+tags
