@@ -63,4 +63,20 @@ expectBox2d(struct box2d *box2d, size_t *retSize, size_t **retColSize)
 	free(box2d);
 	return (void *)table;
 }
+
+static inline void
+delBox2d(struct box2d *box2d, int index1d, int index2d)
+{
+	return delBox(memoryBox(box2d->box, index1d), index2d);
+}
+
+/* Pls user to confirm to clean all element in this box2d[index1d] */
+static inline void
+delBox2d1d(struct box2d *box2d, int index1d)
+{
+	struct box *box = *((struct box **)memoryBox(box2d->box, index1d));
+	free(box->boxMemory);
+	free(box);
+	delBox(box2d->box, index1d);
+}
 #endif

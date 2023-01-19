@@ -27,19 +27,20 @@ void case_1(void)
 
 	ret = expectBox2d(box2d, &size, &colSize);
 	if (size != ARRAYSIZE(a)) {
-		printf("%s is failed, size %d should be %d\n",
+		printf("%s is failed, size %ld should be %ld\n",
 				__func__, size, ARRAYSIZE(a));
 	}
 
 	for (int i = 0; i < size; i++) {
 		if (colSize[i] > ARRAYSIZE(a[0])) {
-			printf("%s is failed, colsize[%d] %d is larger than %d\n",
+			printf("%s is failed, colsize[%d] %ld is larger than %ld\n",
 					__func__, i, colSize[i], ARRAYSIZE(a[0]));
 			continue;
 		}
 		for (int j = 0; j < colSize[i]; j++) {
 			if (a[i][j] == -1) {
-				printf("%s is failed, colsize[%d] %d is bigger than real size\n");
+				printf("%s is failed, colsize[%d] %ld is bigger than real size\n",
+						__func__, i, colSize[i]);
 				break;
 			}
 			if (a[i][j] != ret[i][j]) {
@@ -54,3 +55,49 @@ void case_1(void)
 }
 REGISTER_TEST_CASE(case_1);
 
+void case_2(void)
+{
+	int a[][3] = {{1, 2, 3}, {4, 5, 6}};
+	struct box2d *box2d = newBox2d(sizeof(int));
+	size_t keyRetSize = 1;
+	int delIndex = 0;
+
+	for (size_t i = 0; i < ARRAYSIZE(a); i++) {
+		for (size_t j = 0; j < ARRAYSIZE(a[0]); j++) {
+			inputBox2d(box2d, &a[i][j], i);
+		}
+	}
+
+	delBox2d1d(box2d, delIndex);
+	size_t retSize = 0;
+	size_t *retColSize = NULL;
+	int **ret = (int **)expectBox2d(box2d, &retSize, &retColSize);
+
+	if (retSize != keyRetSize) {
+		printf("%s failed, retSize %ld should be %ld\n",
+				__func__, retSize, keyRetSize);
+		return;
+	}
+	for (size_t i = 0; i < retSize; i++) {
+		int index = i >= delIndex ? i + 1 : i;
+
+		if (retColSize[i] != ARRAYSIZE(a[index])) {
+			printf("%s failed, retColSize %ld should be %ld\n",
+					__func__, retColSize[i], ARRAYSIZE(a[index]));
+			break;
+		}
+		for (size_t j = 0; j < retColSize[i]; j++) {
+			if (a[index][j] != ret[i][j]) {
+				printf("%s failed, ret[%ld][%ld] %d should be %d\n",
+						__func__, i, j, ret[i][j], a[index][j]);
+			}
+		}
+	}
+	for (size_t i = 0; i < retSize; i++) {
+		free(ret[i]);
+	}
+	free(ret);
+	free(retColSize);
+}
+
+REGISTER_TEST_CASE(case_2);

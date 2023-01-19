@@ -63,4 +63,11 @@ static inline void *memoryBox(struct box *box, int index)
 	return box->boxMemory + index * box->boxElementSize;
 }
 
+static inline void delBox(struct box *box, int index)
+{
+	memcpy(box->boxMemory + index * box->boxElementSize,
+			box->boxMemory + (index + 1) * box->boxElementSize,
+			(box->boxHead-- - index - 1) * box->boxElementSize);
+}
+
 #endif

@@ -136,6 +136,37 @@ void case_3(void)
 	free(a);
 }
 
+void case_4(void)
+{
+	int a[] = {1, 2, 3, 4, 5, 6};
+	struct box *box = newBox(sizeof(int));
+	int delIndex = 2;
+
+	for (size_t i = 0; i < ARRAYSIZE(a); i++) {
+		inputBox(box, &a[i]);
+	}
+
+	delBox(box, delIndex);
+	size_t retSize = 0;
+	int *ret = NULL;
+	expectBox(box, (void **)&ret, &retSize);
+
+	for (size_t i = 0; i < retSize; i++) {
+		size_t index = i >= delIndex ? i + 1 : i;
+		if (i >= ARRAYSIZE(a) - 1) {
+			printf("%s failed, retSize %ld is too large, should be %ld\n",
+					__func__, retSize, ARRAYSIZE(a));
+			break;
+		}
+		if (ret[i] != a[index]) {
+			printf("%s failed, ret[%ld] %d should be %d\n",
+					__func__, i, ret[i], a[index]);
+			break;
+		}
+	}
+	free(ret);
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
