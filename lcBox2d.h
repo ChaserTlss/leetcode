@@ -30,6 +30,15 @@ inputBox2d(struct box2d *box2d, void *element, size_t index1d)
 }
 
 static inline void *
+inputBox2d1d(struct box2d *box2d, const struct box *box)
+{
+	struct box *tbox = newBox(box2d->box2dElementSize);
+	void *ret = inputBox(box2d->box, &tbox);
+	cpyBox(tbox, box);
+	return ret;
+}
+
+static inline void *
 memoryBox2d(struct box2d *box2d, int index1d, int index2d)
 {
 	return memoryBox(memoryBox(box2d->box, index1d), index2d);

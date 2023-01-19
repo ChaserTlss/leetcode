@@ -70,4 +70,19 @@ static inline void delBox(struct box *box, int index)
 			(box->boxHead-- - index - 1) * box->boxElementSize);
 }
 
+static inline void cpyBox(struct box *dbox, const struct box *sbox)
+{
+	dbox->boxHead = sbox->boxHead;
+	dbox->boxElementMax = sbox->boxElementMax;
+	dbox->boxElementSize = sbox->boxElementSize;
+	memcpy(dbox->boxMemory, sbox->boxMemory, dbox->boxElementSize * dbox->boxHead);
+
+}
+
+static inline void destoryBox(struct box *box)
+{
+	free(box->boxMemory);
+	free(box);
+}
+
 #endif
