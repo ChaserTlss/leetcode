@@ -10,11 +10,6 @@ int compareInt(const void *a, const void *b)
 	return *(int *)a - *(int *)b;
 }
 
-int compare(const struct box **boxa, const struct box **boxb)
-{
-	return compareBox(*boxa, *boxb, compareInt);
-}
-
 void combinationSumHelper(int *candidates, int candidatesSize, int target, struct box2d *box2d, struct box *box, struct box2d *alreadyCheckTable)
 {
 	for (int i = 0; i < candidatesSize; i++) {
