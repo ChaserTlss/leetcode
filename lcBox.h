@@ -38,7 +38,7 @@ static inline void expectBox(struct box *box, void **table, size_t *retSize)
 	free(box);
 }
 
-static inline void *memoryBox(struct box *box, int index)
+static inline void *memoryBox(const struct box *box, int index)
 {
 	return box->boxMemory + index * box->boxElementSize;
 }
@@ -60,7 +60,7 @@ static inline void *inputBox(struct box *box, void *element)
 	return box->boxMemory + position;
 }
 
-static inline size_t headBox(struct box *box)
+static inline size_t headBox(const struct box *box)
 {
 	return box->boxHead;
 }
@@ -96,4 +96,24 @@ static inline void destoryBox(struct box *box)
 	free(box);
 }
 
+typedef int (*compareBoxElement)(const void *a, const void *b);
+static inline void sortBox(struct box *box, compareBoxElement compare)
+{
+	return qsort(box->boxMemory, box->boxHead, box->boxElementSize, compare);
+}
+
+static inline int compareBox(const struct box *boxa, const struct box *boxb, compareBoxElement compare)
+{
+	int i = 0;
+	while (1) {
+		if (compare(memoryBox(boxa, i), memoryBox(boxb, i)) != 0) {
+			return compare(memoryBox(boxa, i), memoryBox(boxb, i));
+		}
+		if (i > headBox(boxa) || i > headBox(boxb)) {
+			return headBox(boxa) - headBox(boxb);
+		}
+		i++;
+	}
+	return 0;
+}
 #endif

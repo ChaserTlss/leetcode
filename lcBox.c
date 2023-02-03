@@ -167,8 +167,44 @@ void case_4(void)
 	free(ret);
 }
 
+int compare(const void *a, const void *b)
+{
+	return *(int *)a - *(int *)b;
+}
+
+void case_5(void)
+{
+	int a[] = {3, 2, 1, 6, 5, 4};
+	int key[] = {1, 2, 3, 4, 5, 6};
+	struct box *box = newBox(sizeof(int));
+
+	for (size_t i = 0; i < ARRAYSIZE(a); i++) {
+		inputBox(box, &a[i]);
+	}
+
+	sortBox(box, compare);
+	size_t retSize = 0;
+	int *ret = NULL;
+	expectBox(box, (void **)&ret, &retSize);
+
+	for (size_t i = 0; i < retSize; i++) {
+		if (i >= ARRAYSIZE(key)) {
+			printf("%s failed, retSize %ld is too large, should be %ld\n",
+					__func__, retSize, ARRAYSIZE(key));
+			break;
+		}
+		if (ret[i] != key[i]) {
+			printf("%s failed, ret[%ld] %d should be %d\n",
+					__func__, i, ret[i], key[i]);
+			break;
+		}
+	}
+	free(ret);
+}
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
 REGISTER_TEST_CASE(case_4);
+REGISTER_TEST_CASE(case_5);
 

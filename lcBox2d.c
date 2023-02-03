@@ -101,3 +101,60 @@ void case_2(void)
 }
 
 REGISTER_TEST_CASE(case_2);
+
+int compareElment(const void *a, const void *b)
+{
+	return *(int*)a - *(int*)b;
+}
+
+int compare(const struct box **a, const struct box **b)
+{
+	return compareBox(*a, *b, compareElment);
+}
+
+void case_3(void)
+{
+	int a[][3] = {{4, 5, 6}, {1, 2, 3}};
+	int key[][3] = {{1, 2, 3}, {4, 5, 6}};
+	struct box2d *box2d = newBox2d(sizeof(int));
+	size_t keyRetSize = 1;
+
+	for (size_t i = 0; i < ARRAYSIZE(a); i++) {
+		for (size_t j = 0; j < ARRAYSIZE(a[0]); j++) {
+			inputBox2d(box2d, &a[i][j], i);
+		}
+	}
+
+	sortBox2d(box2d, compare);
+
+	size_t retSize = 0;
+	size_t *retColSize = NULL;
+	int **ret = (int **)expectBox2d(box2d, &retSize, &retColSize);
+
+	if (retSize != ARRAYSIZE(key)) {
+		printf("%s failed, retSize %ld should be %ld\n",
+				__func__, retSize, ARRAYSIZE(key));
+		return;
+	}
+	for (size_t i = 0; i < retSize; i++) {
+		if (retColSize[i] != ARRAYSIZE(key[i])) {
+			printf("%s failed, retColSize %ld should be %ld\n",
+					__func__, retColSize[i], ARRAYSIZE(key[i]));
+			break;
+		}
+		for (size_t j = 0; j < retColSize[i]; j++) {
+			if (key[i][j] != ret[i][j]) {
+				printf("%s failed, ret[%ld][%ld] %d should be %d\n",
+						__func__, i, j, ret[i][j], key[i][j]);
+			}
+		}
+	}
+	for (size_t i = 0; i < retSize; i++) {
+		free(ret[i]);
+	}
+	free(ret);
+	free(retColSize);
+}
+
+REGISTER_TEST_CASE(case_3);
+

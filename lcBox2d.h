@@ -88,4 +88,13 @@ delBox2d1d(struct box2d *box2d, int index1d)
 	free(box);
 	delBox(box2d->box, index1d);
 }
+
+typedef int (*compareBox2d)(const struct box **boxa, const struct box **boxb);
+static inline void
+sortBox2d(struct box2d *box2d, compareBox2d compare)
+{
+	return sortBox(box2d->box, (compareBoxElement)compare);
+}
+
 #endif
+
