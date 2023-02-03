@@ -102,14 +102,9 @@ void case_2(void)
 
 REGISTER_TEST_CASE(case_2);
 
-int compareElment(const void *a, const void *b)
+int compareInt(const void *a, const void *b)
 {
 	return *(int*)a - *(int*)b;
-}
-
-int compare(const struct box **a, const struct box **b)
-{
-	return compareBox(*a, *b, compareElment);
 }
 
 void case_3(void)
@@ -125,7 +120,7 @@ void case_3(void)
 		}
 	}
 
-	sortBox2d(box2d, compare);
+	sortBox2d(box2d, compareInt);
 
 	size_t retSize = 0;
 	size_t *retColSize = NULL;

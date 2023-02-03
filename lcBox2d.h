@@ -91,9 +91,12 @@ delBox2d1d(struct box2d *box2d, int index1d)
 
 typedef int (*compareBox2d)(const struct box **boxa, const struct box **boxb);
 static inline void
-sortBox2d(struct box2d *box2d, compareBox2d compare)
+sortBox2d(struct box2d *box2d, compareBoxElement compare)
 {
-	return sortBox(box2d->box, (compareBoxElement)compare);
+	int __compare(const struct box **boxa, const struct box **boxb) {
+		return compareBox(*boxa, *boxb, compare);
+	}
+	return sortBox(box2d->box, (compareBoxElement)__compare);
 }
 
 static inline void
