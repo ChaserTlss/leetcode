@@ -5,14 +5,14 @@
  * The sizes of the arrays are returned as *returnColumnSizes array.
  * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
  */
-int compareElement(const void *a, const void *b)
+int compareInt(const void *a, const void *b)
 {
 	return *(int *)a - *(int *)b;
 }
 
 int compare(const struct box **boxa, const struct box **boxb)
 {
-	return compareBox(*boxa, *boxb, compareElement);
+	return compareBox(*boxa, *boxb, compareInt);
 }
 
 void combinationSumHelper(int *candidates, int candidatesSize, int target, struct box2d *box2d, struct box *box, struct box2d *alreadyCheckTable)
@@ -20,7 +20,7 @@ void combinationSumHelper(int *candidates, int candidatesSize, int target, struc
 	for (int i = 0; i < candidatesSize; i++) {
 		inputBox(box, &candidates[i]);
 		for (int i = 0; i < headBox2d(alreadyCheckTable); i++) {
-			if (compareBox(*(struct box **)memoryBox(alreadyCheckTable->box, i), box, compareElement) == 0) {
+			if (compareBox(*(struct box **)memoryBox(alreadyCheckTable->box, i), box, compareInt) == 0) {
 				goto OUTLOOP;
 			}
 		}
@@ -39,11 +39,6 @@ OUTLOOP:
 			break;
 		}
 	}
-}
-
-int compareInt(const void *a, const void *b)
-{
-	return *(int*)a - *(int*)b;
 }
 
 int **combinationSum2(int *candidates, int candidatesSize, int target, int *returnSize, int **returnColumnSizes)
