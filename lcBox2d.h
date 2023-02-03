@@ -109,5 +109,16 @@ destoryBox2d(struct box2d *box2d)
 	free(box2d);
 }
 
+static inline bool
+checkBox2d1d(struct box2d *box2d, struct box *box, compareBoxElement compare) {
+	for (int i = 0; i < headBox2d(box2d); i++) {
+		struct box *boxElement = *(struct box **)memoryBox(box2d->box, i);
+		if (compareBox(boxElement, box, compare) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 #endif
 

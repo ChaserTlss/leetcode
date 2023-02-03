@@ -14,25 +14,19 @@ void combinationSumHelper(int *candidates, int candidatesSize, int target, struc
 {
 	for (int i = 0; i < candidatesSize; i++) {
 		inputBox(box, &candidates[i]);
-		for (int i = 0; i < headBox2d(alreadyCheckTable); i++) {
-			if (compareBox(*(struct box **)memoryBox(alreadyCheckTable->box, i), box, compareInt) == 0) {
+		if (checkBox2d1d(alreadyCheckTable, box, compareInt))
 				goto OUTLOOP;
-			}
-		}
 		inputBox2d1d(alreadyCheckTable, box);
 
-		if (candidates[i] == target) {
+		if (candidates[i] == target)
 			inputBox2d1d(box2d, box);
 
-		} else if (candidates[i] < target) {
-
+		else if (candidates[i] < target)
 			combinationSumHelper(candidates + i + 1, candidatesSize - i - 1, target - candidates[i], box2d, box, alreadyCheckTable);
-		}
 OUTLOOP:
 		delBox(box, headBox(box) - 1);
-		if (candidates[i] > target) {
+		if (candidates[i] > target)
 			break;
-		}
 	}
 }
 
