@@ -38,6 +38,12 @@ static inline void expectBox(struct box *box, void **table, size_t *retSize)
 	free(box);
 }
 
+static inline void *memoryBox(struct box *box, int index)
+{
+	return box->boxMemory + index * box->boxElementSize;
+}
+
+/* keey one zero element at finally position */
 static inline void *inputBox(struct box *box, void *element)
 {
 	if (box->boxHead + 1 >= box->boxElementMax) {
@@ -48,8 +54,9 @@ static inline void *inputBox(struct box *box, void *element)
 
 	size_t position = box->boxHead * box->boxElementSize;
 
-	memcpy(box->boxMemory + position, element, box->boxElementSize);
+	memcpy(memoryBox(box, box->boxHead), element, box->boxElementSize);
 	box->boxHead += 1;
+	memset(memoryBox(box, box->boxHead), 0, box->boxElementSize);
 	return box->boxMemory + position;
 }
 
@@ -58,15 +65,9 @@ static inline size_t headBox(struct box *box)
 	return box->boxHead;
 }
 
-static inline void *memoryBox(struct box *box, int index)
-{
-	return box->boxMemory + index * box->boxElementSize;
-}
-
 static inline void delBox(struct box *box, int index)
 {
-	memcpy(box->boxMemory + index * box->boxElementSize,
-			box->boxMemory + (index + 1) * box->boxElementSize,
+	memcpy(memoryBox(box, index), memoryBox(box, index + 1),
 			(box->boxHead-- - index - 1) * box->boxElementSize);
 }
 
