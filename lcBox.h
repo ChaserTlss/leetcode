@@ -5,7 +5,7 @@
 #include <string.h>
 
 #ifndef __BOX_START_ELEMENT_SIZE__ 
-#define __BOX_START_ELEMENT_SIZE__ 32
+#define __BOX_START_ELEMENT_SIZE__ 64
 #endif
 
 #ifndef __BOX_REALLOC_SIZE__ 
@@ -67,7 +67,17 @@ static inline size_t headBox(struct box *box)
 
 static inline void delBox(struct box *box, int index)
 {
-	memcpy(memoryBox(box, index), memoryBox(box, index + 1),
+/*=================================================================
+==2339==ERROR: AddressSanitizer: memcpy-param-overlap: memory ranges [0x611000000408,0x611000000411) and [0x61100000040c, 0x611000000415) overlap
+    #0 0x7f8e7f16b1ed in __interceptor_memcpy ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:827
+    #1 0x556d6778e4af in delBox /home/daimiao/leetcode/lcBox.h:72
+    #2 0x556d6779142a in case_4 /home/daimiao/leetcode/lcBox.c:149
+    #3 0x556d6778ed2f in main /home/daimiao/leetcode/lcHead.h:63
+    #4 0x7f8e7e8fdd8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #5 0x7f8e7e8fde3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #6 0x556d6778d364 in _start (/home/daimiao/leetcode/a.out+0x7364)
+    */
+	memmove(memoryBox(box, index), memoryBox(box, index + 1),
 			(box->boxHead-- - index - 1) * box->boxElementSize);
 }
 

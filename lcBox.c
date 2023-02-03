@@ -170,4 +170,5 @@ void case_4(void)
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
+REGISTER_TEST_CASE(case_4);
 
