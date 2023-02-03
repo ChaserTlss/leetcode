@@ -96,5 +96,15 @@ sortBox2d(struct box2d *box2d, compareBox2d compare)
 	return sortBox(box2d->box, (compareBoxElement)compare);
 }
 
+static inline void
+destoryBox2d(struct box2d *box2d)
+{
+	for (int i = 0; i < headBox2d(box2d); i++) {
+		destoryBox(*(struct box **)memoryBox(box2d->box, i));
+	}
+	destoryBox(box2d->box);
+	free(box2d);
+}
+
 #endif
 
