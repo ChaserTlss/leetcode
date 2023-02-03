@@ -43,6 +43,7 @@ static inline void *memoryBox(const struct box *box, int index)
 	return box->boxMemory + index * box->boxElementSize;
 }
 
+/* TBD: did we need this zero element ? */
 /* keey one zero element at finally position */
 static inline void *inputBox(struct box *box, void *element)
 {
@@ -90,7 +91,7 @@ static inline void cpyBox(struct box *dbox, const struct box *sbox)
 	dbox->boxHead = sbox->boxHead;
 	dbox->boxElementMax = sbox->boxElementMax;
 	dbox->boxElementSize = sbox->boxElementSize;
-	memcpy(dbox->boxMemory, sbox->boxMemory, dbox->boxElementSize * dbox->boxHead);
+	memcpy(dbox->boxMemory, sbox->boxMemory, dbox->boxElementSize * (dbox->boxHead + 1));
 
 }
 
@@ -110,11 +111,11 @@ static inline int compareBox(const struct box *boxa, const struct box *boxb, com
 {
 	int i = 0;
 	while (1) {
-		if (compare(memoryBox(boxa, i), memoryBox(boxb, i)) != 0) {
-			return compare(memoryBox(boxa, i), memoryBox(boxb, i));
-		}
 		if (i > headBox(boxa) || i > headBox(boxb)) {
 			return headBox(boxa) - headBox(boxb);
+		}
+		if (compare(memoryBox(boxa, i), memoryBox(boxb, i)) != 0) {
+			return compare(memoryBox(boxa, i), memoryBox(boxb, i));
 		}
 		i++;
 	}
