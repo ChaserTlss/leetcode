@@ -3,7 +3,7 @@
 void case_1(void)
 {
 	int a[] = {1, 2};
-	size_t test_size = test_size;
+	size_t test_size = 2;
 
 	struct box *box = newBox(sizeof(a[0]));
 
