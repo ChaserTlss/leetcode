@@ -202,9 +202,33 @@ void case_5(void)
 	free(ret);
 }
 
+void case_6(void)
+{
+	struct box *box = newBox(sizeof(int));
+	struct box *dbox = newBox(sizeof(int));
+
+	/* make memory realloc */
+	for (int i = 0; i < 2 * __BOX_START_ELEMENT_SIZE__; i++) {
+		inputBox(box, &i);
+	}
+
+	cpyBox(dbox, box);
+
+	for (int i = 0; i < 2 * __BOX_START_ELEMENT_SIZE__; i++) {
+		if (*(int *)memoryBox(dbox, i) != i)
+			printf("%s is failed! dbox[i] is %d, should be %d\n",
+					__func__, *(int *)memoryBox(dbox, i), i);
+	}
+
+	destoryBox(box);
+	destoryBox(dbox);
+}
+
+
 REGISTER_TEST_CASE(case_1);
 REGISTER_TEST_CASE(case_2);
 REGISTER_TEST_CASE(case_3);
 REGISTER_TEST_CASE(case_4);
 REGISTER_TEST_CASE(case_5);
+REGISTER_TEST_CASE(case_6);
 

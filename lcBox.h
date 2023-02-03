@@ -83,6 +83,10 @@ static inline void delBox(struct box *box, int index)
 
 static inline void cpyBox(struct box *dbox, const struct box *sbox)
 {
+	if(dbox->boxElementSize * dbox->boxElementMax < sbox->boxElementMax * sbox->boxElementSize) {
+		free(dbox->boxMemory);
+		dbox->boxMemory = malloc(sbox->boxElementMax * sbox->boxElementSize);
+	}
 	dbox->boxHead = sbox->boxHead;
 	dbox->boxElementMax = sbox->boxElementMax;
 	dbox->boxElementSize = sbox->boxElementSize;
