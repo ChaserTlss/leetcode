@@ -51,7 +51,7 @@ static inline bool getBitmap(struct bitmap *bitmap, size_t index)
 	return bitmap->buffer[index/__BITMAP_BITW__] & (bitmap_t)1 << (index%__BITMAP_BITW__);
 }
 
-static inline size_t ffsBitmap(struct bitmap *bitmap)
+static inline ssize_t ffsBitmap(struct bitmap *bitmap)
 {
 	int i = 0;
 	for (i = 0; i < DIV_ROUND_UP(bitmap->elementCount, __BITMAP_BITW__); i++) {
