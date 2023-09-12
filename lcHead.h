@@ -51,16 +51,43 @@ static bool listCheck(struct ListNode *head, int valArray[], size_t arraySize)
 
 /* for common unit function */
 typedef void (*case_fn_t)(void);
+#if __clang__
+extern case_fn_t __start_test_fn_p __asm__("section$start$test_case$test_fn_p");
+extern case_fn_t __stop_test_fn_p __asm__("section$end$test_case$test_fn_p");
+#define REGISTER_TEST_CASE(fn_name) \
+	case_fn_t __attribute__((section ("test_case,test_fn_p"))) fn_name##_fn = fn_name
+#elif __GNUC__
 extern case_fn_t __start_test_fn_p;
 extern case_fn_t __stop_test_fn_p;
 #define REGISTER_TEST_CASE(fn_name) \
 	case_fn_t __attribute__((section ("test_fn_p"))) fn_name##_fn = fn_name
+#endif
 
 int main(void)
 {
 	int index = 0;
-	for (case_fn_t *iter = &__start_test_fn_p; iter + index < &__stop_test_fn_p; index++)
-		(*(iter + index))();
+	/* There is a difference between clang and gcc:
+	 * What gcc offer with __start_test_fn_p is the array's start.
+	 * If we try to get the address of the array's start, we will get the array's start again,
+	 * They are same. array's start == array's start's address.
+	 * But in clang the __start_test_fn_p is a point.
+	 * point's address != point's value.
+	 * I prefer use the &__start_test_fn_p to indicate I'm operating the elemnt's address.
+	 * But I can not do it in clang.
+	 * So we use __start_test_fn_p as point, then it can work well both in clang and gcc.
+	 */
+
+	/* YES, I want to compare the address, and they are function address, make the clang quiet */
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wordered-compare-function-pointers"
+#endif
+	for (case_fn_t iter = __start_test_fn_p; (iter + index) < __stop_test_fn_p; index++)
+		(iter + index)();
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 
 	printf("unit test finish: count %d. pls check the log\n", index);
 	return 0;
