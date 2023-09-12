@@ -16,7 +16,7 @@ void updateBoardState(struct boardState *bs, size_t ver, size_t hor, char val)
 	clearBitmap(bs->group[VH2GROUP(ver, hor)], val - '1');
 }
 
-#define ONLYBIT(t) (t && !(t & ~(1 << ffs(t) - 1)))
+#define ONLYBIT(t) (t && !(t & ~(1 << (ffs(t) - 1))))
 int solveBoardState(struct boardState *bs, size_t ver, size_t hor)
 {
 	size_t group = VH2GROUP(ver, hor);
@@ -81,7 +81,7 @@ void allSolution(struct boardState *bs, size_t ver, size_t hor, int *ret)
 	int head = 0;
 	while (t) {
 		ret[head++] = ffs(t);
-		t &= ~(1 << ffs(t) - 1);
+		t &= ~(1 << (ffs(t) - 1));
 	}
 }
 #ifdef CHECKPOINT_1
