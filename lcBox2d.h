@@ -2,6 +2,7 @@
 #define __LCBOX2D_H__
 
 #include "lcBox.h"
+#include <assert.h>
 
 struct box2d {
 	struct box *box;
@@ -90,6 +91,8 @@ delBox2d1d(struct box2d *box2d, int index1d)
 }
 
 typedef int (*compareBox2d)(const struct box **boxa, const struct box **boxb);
+
+#ifdef NESTED_FUNCTION
 static inline void
 sortBox2d(struct box2d *box2d, compareBoxElement compare)
 {
@@ -98,6 +101,13 @@ sortBox2d(struct box2d *box2d, compareBoxElement compare)
 	}
 	return sortBox(box2d->box, (compareBoxElement)__compare);
 }
+#else
+static inline void
+sortBox2d(struct box2d *box2d, compareBoxElement compare)
+{
+	assert(0);
+}
+#endif
 
 static inline void
 destoryBox2d(struct box2d *box2d)
