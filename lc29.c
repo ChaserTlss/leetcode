@@ -1,6 +1,6 @@
 #include "lcHead.h"
 
-static inline int fls(unsigned int v)
+static inline int __fls(unsigned int v)
 {
 	int ret = 32;
 
@@ -35,7 +35,7 @@ int divide(int dividend, int divisor)
 		sign = - sign;
 	}
 
-	int leftShiftBit = 32 - fls(__divisor);
+	int leftShiftBit = 32 - __fls(__divisor);
 
 	while (__dividend >= __divisor) {
 		while (__divisor << leftShiftBit > __dividend && leftShiftBit > 0)
@@ -132,26 +132,26 @@ void case_7(void)
 	int v = 0b1000;
 	int bitPostion = 4;
 
-	if (bitPostion != fls(v)) {
-		printf("%s failed, ret %d should be %d\n", __func__, fls(v), bitPostion);
+	if (bitPostion != __fls(v)) {
+		printf("%s failed, ret %d should be %d\n", __func__, __fls(v), bitPostion);
 	}
 
 	v = 0;
 	bitPostion = 0;
-	if (bitPostion != fls(v)) {
-		printf("%s failed, ret %d should be %d\n", __func__, fls(v), bitPostion);
+	if (bitPostion != __fls(v)) {
+		printf("%s failed, ret %d should be %d\n", __func__, __fls(v), bitPostion);
 	}
 
 	v = 1;
 	bitPostion = 1;
-	if (bitPostion != fls(v)) {
-		printf("%s failed, ret %d should be %d\n", __func__, fls(v), bitPostion);
+	if (bitPostion != __fls(v)) {
+		printf("%s failed, ret %d should be %d\n", __func__, __fls(v), bitPostion);
 	}
 
 	v = 3;
 	bitPostion = 2;
-	if (bitPostion != fls(v)) {
-		printf("%s failed, ret %d should be %d\n", __func__, fls(v), bitPostion);
+	if (bitPostion != __fls(v)) {
+		printf("%s failed, ret %d should be %d\n", __func__, __fls(v), bitPostion);
 	}
 }
 
