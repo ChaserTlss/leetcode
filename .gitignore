@@ -4,3 +4,5 @@ perf.data
 perf.data.old
 kernel.svg
 tags
+a.out.dSYM/
+
