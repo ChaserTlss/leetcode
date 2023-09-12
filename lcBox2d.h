@@ -105,6 +105,7 @@ sortBox2d(struct box2d *box2d, compareBoxElement compare)
 static inline void
 sortBox2d(struct box2d *box2d, compareBoxElement compare)
 {
+	/* TODO: implement */
 	assert(0);
 }
 #endif
