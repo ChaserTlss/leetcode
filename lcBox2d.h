@@ -102,11 +102,20 @@ sortBox2d(struct box2d *box2d, compareBoxElement compare)
 	return sortBox(box2d->box, (compareBoxElement)__compare);
 }
 #else
+static int __compare(void *base, const void *a, const void *b) {
+	return compareBox(*(struct box **)a, *(struct box **)b, (compareBoxElement)base);
+}
 static inline void
 sortBox2d(struct box2d *box2d, compareBoxElement compare)
 {
-	/* TODO: implement */
-	assert(0);
+	/* without nested function, there is three way I can have I think:
+	 * 1. use global variable
+	 * 2. use the qsort_r to replace qsort
+	 * 3. use the macro to help user to generate the function
+	 */
+	/* As I hope not modify the test case, So I use the second way */
+	qsort_r(box2d->box->boxMemory, box2d->box->boxHead, box2d->box->boxElementSize, (void *)compare, __compare);
+
 }
 #endif
 
