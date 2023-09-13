@@ -56,8 +56,29 @@ char *multiply(char *num1, char *num2)
 			/* replace low two digits */
 			ret_r[i + j] = digit_mul % 10 + '0';
 			ret_r[i + j + 1] = (digit_mul / 10) % 10 + '0';
-			/* add carray */
+			/* Add carray */
+#if BUGFIX
+			int carray = digit_mul / 100;
+			int carray_i = i + j + 1;
+			while (carray && carray_i++ < len_ret) {
+				ret_r[carray_i] += carray;
+				if (ret_r[carray_i] == ':') {
+					ret_r[carray_i] = '0';
+				} else {
+					carray = 0;
+				}
+			}
+#else
+			/* In this, bug is a feature!
+			 * There is a situation not be consider:
+			 * transfer carray. If ret_r[i + j + 2] == '9'
+			 * and digit_mul / 100 == 1.
+			 * then after ret_t[i + j + 2] += digit_mul / 100
+			 * ret_t[i + j + 2] == ':'
+			 * a invalid num char.
+			 * But we still can get right answer. */
 			ret_r[i + j + 2] += (digit_mul / 100);
+#endif
 		}
 	}
 
@@ -137,4 +158,17 @@ void case_5(void)
 	free(ret);
 }
 REGISTER_TEST_CASE(case_5);
+
+void case_6(void)
+{
+	char *num1 = "999999";
+	char *num2 = "11";
+	char *key = "10999989";
+
+	char *ret = multiply(num2, num1);
+
+	assert(strcmp(ret, key) == 0);
+	free(ret);
+}
+REGISTER_TEST_CASE(case_6);
 
