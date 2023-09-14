@@ -55,9 +55,15 @@ bool __isMatch(char *s, char *p)
 		return false;
 
 	switch(p[0]) {
-	case '*':
-		return starMatch(s, p);
+	case '*': 
+	{
+		/* if there a mulit star, merge then */
+		char *temp = p;
+		while (temp[1] == '*')
+			temp++;
+		return starMatch(s, temp);
 		break;
+	}
 	case '?':
 		return anyMatch(s, p);
 		break;
