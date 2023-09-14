@@ -18,65 +18,89 @@
  * and the convenient way is to use the function call stack.
  * another way we need to implement a stack ourself.
  */
-bool __isMatch(char *s, char *p);
-bool starMatch(char *s, char *p)
+/* use a bitmap as a cache */
+struct cache {
+	size_t p_size;
+	size_t s_size;
+	struct bitmap *map;
+};
+
+bool __isMatch(char *s, char *p, struct cache *c);
+bool starMatch(char *s, char *p, struct cache *c)
 {
 	/* star can match any sequence of character, include empty. */
 	int s_len = strlen(s);
 
 	for (int i = 0; i <= s_len; i++) {
-		if (__isMatch(&s[i], &p[1]))
+		if (__isMatch(&s[i], &p[1], c))
 			return true;
 	}
 
 	return false;
 }
 
-bool anyMatch(char *s, char *p) {
-	/* ? match any character */
-	if (s[0] == 0)
-		return false;
-	return __isMatch(&s[1], &p[1]);
-}
-
-bool charMatch(char *s, char *p) {
-	if (s[0] != p[0])
-		return false;
-	return __isMatch(&s[1], &p[1]);
-}
-
-bool __isMatch(char *s, char *p)
+bool __isMatch(char *s, char *p, struct cache *c)
 {
+	/* if map[index] be set, it means this pattern is checked, and false */
+	if (getBitmap(c->map, strlen(s) * c->p_size + strlen(p))) {
+		return false;
+	}
 	/* in this first version, I don't want to care about the
 	 * performance, I mean I will not make a cache in that */
-	if (s[0] == 0 && p[0] == 0)
-		return true;
-	if (p[0] == 0)
-		return false;
+	char *p_t = p;
+	char *s_t = s;
 
-	switch(p[0]) {
-	case '*': 
-	{
-		/* if there a mulit star, merge then */
-		char *temp = p;
-		while (temp[1] == '*')
-			temp++;
-		return starMatch(s, temp);
-		break;
+	while (p_t[0] != 0) {
+		switch(p_t[0]) {
+		case '*': 
+		{
+			/* if there a mulit star, merge then */
+			char *temp = p_t;
+			while (temp[1] == '*')
+				temp++;
+			if (starMatch(s_t, temp, c))
+				return true;
+			else
+				goto FALSE;
+			break;
+		}
+		case '?':
+			if (s_t[0] == 0)
+				goto FALSE;
+			p_t ++;
+			s_t ++;
+			break;
+		default:
+			if (s_t[0] != p_t[0])
+				goto FALSE;
+			p_t ++;
+			s_t ++;
+			break;
+		}
 	}
-	case '?':
-		return anyMatch(s, p);
-		break;
-	default:
-		return charMatch(s, p);
-		break;
-	}
+
+	if (s_t[0] == 0 && p_t[0] == 0)
+		return true;
+FALSE:
+	setBitmap(c->map, strlen(s) * c->p_size + strlen(p));
+	return false;
 	
 }
 
 bool isMatch(char *s, char *p)
 {
-	return __isMatch(s, p);
+	struct cache c;
+
+	c.p_size = strlen(p) + 1; /* 1 for '\0' */
+	c.s_size = strlen(s) + 1;
+
+	c.map = newBitmap(c.p_size * c.s_size);
+	setAllBitmap(c.map, 0);
+
+	bool ret =  __isMatch(s, p, &c);
+	free(c.map);
+
+	return ret;
 }
 
 void case_1(void)
@@ -139,4 +163,14 @@ void case_6(void)
 	assert(key == isMatch(s, p));
 }
 REGISTER_TEST_CASE(case_6);
+
+void case_7(void)
+{
+	char *s = "abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb";
+	char *p = "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb";
+
+	int key = 0;
+	assert(key == isMatch(s, p));
+}
+REGISTER_TEST_CASE(case_7);
 
