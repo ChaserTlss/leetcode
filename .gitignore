@@ -5,4 +5,5 @@ perf.data.old
 kernel.svg
 tags
 a.out.dSYM/
+.DS_Store
 
