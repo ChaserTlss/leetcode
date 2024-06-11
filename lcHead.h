@@ -61,7 +61,7 @@ extern case_fn_t __stop_test_fn_p __asm__("section$end$test_case$test_fn_p");
 extern case_fn_t __start_test_fn_p;
 extern case_fn_t __stop_test_fn_p;
 #define REGISTER_TEST_CASE(fn_name) \
-	case_fn_t __attribute__((section ("test_fn_p"))) fn_name##_fn = fn_name
+	case_fn_t __attribute__((section ("test_case,test_fn_p"))) fn_name##_fn = fn_name
 #endif
 
 int main(void)

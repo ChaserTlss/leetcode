@@ -1,1 +1,1 @@
-gcc -g -fsanitize=address -fsanitize=undefined $@
+gcc-13 -g $@

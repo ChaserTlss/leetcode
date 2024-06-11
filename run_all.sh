@@ -3,6 +3,6 @@ for x in `ls *.c`
 do
 	./compile.sh $x
 	./a.out
-	gcc -g $x
+	gcc-13 -g $x
 	./a.out
 done
